@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make a Payment - SecureBank</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-name {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        nav {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 0 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            display: block;
+            padding: 1rem 0;
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .nav-links a.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #666;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            color: #1a1a1a;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .account-select {
+            background: #f8f9ff;
+            border: 2px solid #667eea;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .account-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .account-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        .account-number {
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        .account-balance {
+            font-weight: 700;
+            font-size: 1.25rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .input-hint {
+            font-size: 0.85rem;
+            color: #999;
+            margin-top: 0.25rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 1rem;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9ff;
+        }
+
+        .summary-section {
+            background: #f8f9ff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #667eea;
+            padding-top: 1rem;
+        }
+
+        .summary-label {
+            color: #666;
+        }
+
+        .summary-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .quick-amounts {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .quick-amount-btn {
+            padding: 0.5rem;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .quick-amount-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .recent-recipients {
+            list-style: none;
+        }
+
+        .recipient-item {
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .recipient-item:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .recipient-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+
+        .recipient-account {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .info-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: #856404;
+        }
+
+        @media (max-width: 968px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                overflow-x: auto;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            main {
+                padding: 1rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .quick-amounts {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <div class="logo-icon">S</div>
+            <div class="logo-text">SecureBank</div>
+        </div>
+        <div class="user-info">
+            <span class="user-name">John Doe</span>
+            <button class="logout-btn">Log Out</button>
+        </div>
+    </header>
+
+    <nav>
+        <ul class="nav-links">
+            <li><a href="#">Overview</a></li>
+            <li><a href="#" class="active">Payments</a></li>
+            <li><a href="#">Accounts</a></li>
+            <li><a href="#">Cards</a></li>
+            <li><a href="#">Savings</a></li>
+            <li><a href="#">Statements</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="page-header">
+            <h1>Make a Payment</h1>
+            <p>Transfer money to any account securely</p>
+        </div>
+
+        <div class="content-grid">
+            <div class="card">
+                <h2>Payment Details</h2>
+
+                <form>
+                    <div class="form-group">
+                        <label>From Account</label>
+                        <div class="account-select">
+                            <div class="account-info">
+                                <div>
+                                    <div class="account-name">Main Account</div>
+                                    <div class="account-number">EE38 2200 2210 2014 5685</div>
+                                </div>
+                                <div class="account-balance">€12,458.50</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recipient-name">Recipient Name</label>
+                        <input type="text" id="recipient-name" name="recipient-name" placeholder="Enter recipient's name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recipient-account">Recipient Account (IBAN)</label>
+                        <input type="text" id="recipient-account" name="recipient-account" placeholder="EE38 2200 2210 2014 5685" required>
+                        <div class="input-hint">International Bank Account Number</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount">Amount (EUR)</label>
+                        <input type="number" id="amount" name="amount" placeholder="0.00" step="0.01" min="0.01" required>
+                        <div class="quick-amounts">
+                            <button type="button" class="quick-amount-btn">€50</button>
+                            <button type="button" class="quick-amount-btn">€100</button>
+                            <button type="button" class="quick-amount-btn">€250</button>
+                            <button type="button" class="quick-amount-btn">€500</button>
+                            <button type="button" class="quick-amount-btn">€1,000</button>
+                            <button type="button" class="quick-amount-btn">€2,500</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reference">Payment Reference</label>
+                        <input type="text" id="reference" name="reference" placeholder="Invoice number, description, etc.">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Message to Recipient (Optional)</label>
+                        <textarea id="message" name="message" placeholder="Add a note to the recipient"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="payment-date">Payment Date</label>
+                        <select id="payment-date" name="payment-date">
+                            <option value="today">Today</option>
+                            <option value="tomorrow">Tomorrow</option>
+                            <option value="custom">Select Date...</option>
+                        </select>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn-secondary">Save as Template</button>
+                        <button type="submit" class="btn-primary">Continue to Confirm</button>
+                    </div>
+
+                    <div class="info-box">
+                        ⓘ Payments within SecureBank are instant. International transfers may take 1-3 business days.
+                    </div>
+                </form>
+            </div>
+
+            <div>
+                <div class="card">
+                    <h2>Payment Summary</h2>
+                    <div class="summary-section">
+                        <div class="summary-row">
+                            <span class="summary-label">Payment Amount</span>
+                            <span class="summary-value">€0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Transfer Fee</span>
+                            <span class="summary-value">€0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Total</span>
+                            <span class="summary-value">€0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 1.5rem;">
+                    <h2>Recent Recipients</h2>
+                    <ul class="recent-recipients">
+                        <li class="recipient-item">
+                            <div class="recipient-name">Sarah Johnson</div>
+                            <div class="recipient-account">EE76 2200 2210 3456 7890</div>
+                        </li>
+                        <li class="recipient-item">
+                            <div class="recipient-name">Tech Solutions OÜ</div>
+                            <div class="recipient-account">EE45 2200 2210 9876 5432</div>
+                        </li>
+                        <li class="recipient-item">
+                            <div class="recipient-name">Michael Chen</div>
+                            <div class="recipient-account">EE89 2200 2210 1111 2222</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
