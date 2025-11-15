@@ -27,8 +27,7 @@ export function mountScamducationWidget(config?: WidgetConfig | HTMLElement | st
   // Handle backward compatibility: if config is a string or HTMLElement, treat as container
   let containerOrSelector: HTMLElement | string | null = null;
   let widget: WidgetType = 'default';
-  let options: { character?: string; animate?: boolean; widget?: WidgetType } = { character: 'scamuel', animate: true, widget: 'greeting' };
-
+  let options: { character?: string; animate?: boolean; widget?: WidgetType } = { character: 'scamuel', animate: true, widget: 'qr' };
   if (config) {
     if (typeof config === 'string' || config instanceof HTMLElement) {
       containerOrSelector = config;
