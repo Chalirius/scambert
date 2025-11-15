@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from "react"
 import { motion, easeInOut } from "motion/react"
-import ScammerblobIcon from "./ScammerBlobIcon"
+import ScambertIcon from "./ScambertIcon"
 
-interface ScammerblobIconProps {
+interface ScambertIconProps {
   size?: number
   className?: string
   animate?: boolean
@@ -46,7 +46,7 @@ export const GreetingComponent: React.FC<GreetingProps> = ({
       style={{ position: "absolute", top: "25em", left: "1em" }}
     >
       <div className="widget-header" style={headerStyle}>
-        <ScammerblobIcon animate={animate}></ScammerblobIcon>
+        <ScambertIcon animate={animate}></ScambertIcon>
 
         <motion.div
           className="absolute top-6 -left-28 bg-slate-800 border border-slate-600 rounded-2xl rounded-br-sm px-3 py-1.5 shadow-lg"
@@ -65,7 +65,7 @@ export const GreetingComponent: React.FC<GreetingProps> = ({
   )
 }
 
-// export function ScammerblobIcon({ size = 80, className = '', animate = false, blobAnimation }: ScammerblobIconProps) {
+// export function ScambertIcon({ size = 80, className = '', animate = false, blobAnimation }: ScambertIconProps) {
 //   const eyeAnimation = animate ? {
 //     x: [0, 2, -2, 0],
 //     transition: {

@@ -10,7 +10,7 @@ import {
   GraduationCap,
 } from "lucide-react"
 import { motion } from "motion/react"
-import ScammerBlobIcon from "./ScammerBlobIcon"
+import ScambertIcon from "./ScambertIcon"
 import QRCode from "react-qr-code"
 
 interface Scenario {
@@ -864,7 +864,7 @@ const QRScamGame: React.FC = () => {
               <div className="qr-card-header-flex">
                 <div className="qr-blob-container">
                   <div className="qr-blob-glow"></div>
-                  <ScammerBlobIcon size={50} animate mode="lecturer" />
+                  <ScambertIcon size={50} animate mode="lecturer" />
                 </div>
                 <div>
                   <h1 className="qr-title">QR Code Scam Detective</h1>
@@ -937,7 +937,7 @@ const QRScamGame: React.FC = () => {
                 <div className="qr-card-header-flex">
                   <div className="qr-blob-container">
                     <div className="qr-blob-glow qr-blob-glow-blue"></div>
-                    <ScammerBlobIcon size={40} animate />
+                    <ScambertIcon size={40} animate />
                   </div>
                   <div>
                     <h2 className="qr-title">
@@ -1100,7 +1100,7 @@ const QRScamGame: React.FC = () => {
                 <div className="qr-card-header-flex">
                   <div className="qr-blob-container">
                     <div className="qr-blob-glow"></div>
-                    <ScammerBlobIcon size={50} animate mode="lecturer" />
+                    <ScambertIcon size={50} animate mode="lecturer" />
                   </div>
                   <div>
                     <h1 className="qr-title qr-title-large">

@@ -1,6 +1,6 @@
 import { motion } from "motion/react"
 
-interface ScammerblobIconProps {
+interface ScambertIconProps {
   size?: number
   className?: string
   animate?: boolean
@@ -8,12 +8,12 @@ interface ScammerblobIconProps {
   withPointer?: boolean
 }
 
-export default function ScammerblobIcon({
+export default function ScambertIcon({
   size = 80,
   className = "",
   mode = "scammer",
   withPointer = false,
-}: ScammerblobIconProps) {
+}: ScambertIconProps) {
   // Color scheme based on mode
   const blobColor = mode === "mega" ? "#d4af37" : "#1a1a1a" // Golden or black
   const blobHighlight = mode === "mega" ? "#f5d659" : "#2a2a2a"
