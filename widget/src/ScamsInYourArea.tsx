@@ -69,7 +69,7 @@ export function ScamsInYourArea() {
               delay: 0.3,
             }}
           >
-            <ScambertIcon size={28} />
+            <ScambertIcon size={56} />
           </motion.div>
           <h2
             style={{
