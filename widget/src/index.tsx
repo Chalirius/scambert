@@ -1,39 +1,41 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { GreetingComponent } from './greeting'
+import QRScamGame from './qr';
 
-type WidgetType = 'greeting' | 'default';
+type WidgetType = 'greeting' | 'default' | 'qr';
 
 interface WidgetConfig {
-  type?: WidgetType;
   container?: HTMLElement | string;
   // options passed to the selected component
   options?: {
     character?: string;
     animate?: boolean;
+    widget?: WidgetType;
   };
 }
 
 // Component map for selecting the appropriate subcomponent
 const componentMap: Record<WidgetType, React.FC<any>> = {
   greeting: GreetingComponent,
-  default: GreetingComponent, // default to greeting
+  qr: QRScamGame, 
+  default: GreetingComponent
 };
 
 // Mount API: allow programmatic mounting with component selection and options
 export function mountScamducationWidget(config?: WidgetConfig | HTMLElement | string) {
   // Handle backward compatibility: if config is a string or HTMLElement, treat as container
   let containerOrSelector: HTMLElement | string | null = null;
-  let widgetType: WidgetType = 'default';
-  let options: { character?: string; animate?: boolean } = { character: 'scamuel', animate: true };
+  let widget: WidgetType = 'default';
+  let options: { character?: string; animate?: boolean; widget?: WidgetType } = { character: 'scamuel', animate: true, widget: 'greeting' };
 
   if (config) {
     if (typeof config === 'string' || config instanceof HTMLElement) {
       containerOrSelector = config;
     } else if (typeof config === 'object' && config !== null) {
       containerOrSelector = config.container || null;
-      widgetType = config.type || 'default';
       options = { ...options, ...(config.options || {}) };
+      console.log(JSON.stringify(options));
     }
   }
 
@@ -57,7 +59,8 @@ export function mountScamducationWidget(config?: WidgetConfig | HTMLElement | st
   }
 
   // Get the component based on type
-  const Component = componentMap[widgetType] || GreetingComponent;
+  const Component = componentMap[options.widget || 'default'
+  ] || GreetingComponent;
 
   const root = createRoot(container);
   root.render(<Component {...options} />);
