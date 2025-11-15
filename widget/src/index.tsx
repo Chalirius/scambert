@@ -5,14 +5,10 @@ import QRScamGame from './qr';
 
 type WidgetType = 'greeting' | 'default' | 'qr';
 
-interface WidgetConfig {
-  container?: HTMLElement | string;
-  // options passed to the selected component
-  options?: {
+interface WidgetOptions {
     character?: string;
     animate?: boolean;
-    widget?: WidgetType;
-  };
+    widgetType?: WidgetType;
 }
 
 // Component map for selecting the appropriate subcomponent
@@ -23,46 +19,16 @@ const componentMap: Record<WidgetType, React.FC<any>> = {
 };
 
 // Mount API: allow programmatic mounting with component selection and options
-export function mountScamducationWidget(config?: WidgetConfig | HTMLElement | string) {
-  // Handle backward compatibility: if config is a string or HTMLElement, treat as container
-  let containerOrSelector: HTMLElement | string | null = null;
-  let widget: WidgetType = 'default';
-  let options: { character?: string; animate?: boolean; widget?: WidgetType } = { character: 'scamuel', animate: true, widget: 'greeting' };
+export function mountScamducationWidget(config: HTMLElement | null) {
 
-  if (config) {
-    if (typeof config === 'string' || config instanceof HTMLElement) {
-      containerOrSelector = config;
-    } else if (typeof config === 'object' && config !== null) {
-      containerOrSelector = config.container || null;
-      options = { ...options, ...(config.options || {}) };
-      console.log(JSON.stringify(options));
-    }
-  }
+  if (!config) return null;
 
-  const container: HTMLElement | null = typeof containerOrSelector === 'string'
-    ? (document.querySelector(containerOrSelector) as HTMLElement | null)
-    : (containerOrSelector as HTMLElement | null) || document.getElementById('root');
-
-  if (!container) return null;
-
-  // If container has data-attributes for configuration, prefer those when options not explicitly provided
-  if (container && container instanceof HTMLElement) {
-    try {
-      const ds = (container as HTMLElement).dataset;
-      if (ds.character && !options.character) options.character = ds.character;
-      if (ds.animate && options.animate === undefined) {
-        options.animate = ds.animate === 'true';
-      }
-    } catch (e) {
-      // ignore dataset read errors
-    }
-  }
+  const options = (config.dataset || {}) as WidgetOptions;
 
   // Get the component based on type
-  const Component = componentMap[options.widget || 'default'
-  ] || GreetingComponent;
+  const Component = componentMap[options.widgetType || 'greeting'];
 
-  const root = createRoot(container);
+  const root = createRoot(config);
   root.render(<Component {...options} />);
 
   return {
@@ -75,5 +41,6 @@ export function mountScamducationWidget(config?: WidgetConfig | HTMLElement | st
 
 // Auto-mount if a `#root` container exists on page
 if (document.getElementById('root')) {
-  mountScamducationWidget();
+  const element = document.getElementById('root')
+  mountScamducationWidget(element);
 }

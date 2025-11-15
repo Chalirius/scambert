@@ -5,6 +5,7 @@ interface ScammerblobIconProps {
   size?: number;
   className?: string;
   animate?: boolean;
+  blobAnimation?: any;
 }
 
 interface Character {
@@ -21,44 +22,74 @@ export const GreetingComponent: React.FC<GreetingProps> = ({ character = 'scamue
   // initial character state derived from `character` prop
   const initial = useMemo<Character>(() => {
     if (character === 'scamuel') {
-      return { tone: 'friendly', text: "Hi, I'm Scamuel — your financial guardian!" };
+      return { tone: 'friendly', text: "Hi, I'm Scamuel!" };
     }
     return { tone: 'friendly', text: 'Hi there!' };
   }, [character]);
 
   const [characterState, setCharacter] = useState<Character>(initial);
 
-  const handleSimulationClick = () => {
-    setCharacter({
-      tone: 'serious',
-      text: "Uh-oh! You clicked on a scam link! Here's what went wrong..."
-    });
+  // Inline styles for a static speech bubble (no animation)
+  const headerStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
   };
 
-  return (
-    <div className="scamducation-widget">
-      <div className="widget-header">
-        <ScammerblobIcon animate={animate}></ScammerblobIcon>
-        <h2>{characterState.text}</h2>
-      </div>
-    </div>
-  );
-};
+  const bubbleStyle: React.CSSProperties = {
+    background: '#ffffff',
+    color: '#0b1220',
+    padding: '12px 16px',
+    borderRadius: 16,
+    maxWidth: 260,
+    boxShadow: '0 8px 20px rgba(8,10,20,0.18)',
+    fontSize: 14,
+    lineHeight: 1.2,
+  };
 
-export function ScammerblobIcon({ size = 80, className = '', animate = false }: ScammerblobIconProps) {
-  const eyeAnimation = animate ? {
-    x: [0, 2, -2, 0],
+  const titleStyle: React.CSSProperties = {
+    margin: 0,
+    fontWeight: 600,
+    letterSpacing: '0.2px',
+  };
+
+  const subtitleStyle: React.CSSProperties = {
+    margin: '6px 0 0 0',
+    fontSize: 12,
+    opacity: 0.85,
+  };
+
+    const blobAnimation = animate ? {
+    y: [0, -3, 0],
     transition: {
-      duration: 3,
+      duration: 2,
       repeat: Infinity,
       ease: easeInOut
     }
   } : {};
 
-  const blobAnimation = animate ? {
-    y: [0, -3, 0],
+
+  return (
+    <div className="scamducation-widget">
+      <div className="widget-header" style={headerStyle}>
+        <ScammerblobIcon animate={animate} blobAnimation={blobAnimation}></ScammerblobIcon>
+
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+          <motion.div style={bubbleStyle} animate={blobAnimation} aria-live="polite">
+            <p style={titleStyle}>{characterState.text}</p>
+            <p style={subtitleStyle}>Friendly financial tips from your guardian.</p>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export function ScammerblobIcon({ size = 80, className = '', animate = false, blobAnimation }: ScammerblobIconProps) {
+  const eyeAnimation = animate ? {
+    x: [0, 2, -2, 0],
     transition: {
-      duration: 2,
+      duration: 3,
       repeat: Infinity,
       ease: easeInOut
     }
