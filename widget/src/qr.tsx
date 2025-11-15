@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Shield, AlertTriangle, CheckCircle, XCircle, Eye, Award } from 'lucide-react';
+import { Shield, AlertTriangle, CheckCircle, XCircle, Eye, Award, RotateCcw, GraduationCap } from 'lucide-react';
+import { motion } from 'motion/react';
+import ScammerBlobIcon from './ScammerBlobIcon';
 
 interface Scenario {
   id: number;
@@ -28,7 +30,7 @@ const scenarios: Scenario[] = [
     redFlags: ["Generic design", "Vague 'research institution' name", "Amazon voucher as bait"],
     safePoints: [],
     isScam: true,
-    explanation: "Red flags everywhere! The research paper showed that 83% of victims fell for professionally designed posters with vouchers. Real university studies include department names and ethics approval numbers."
+    explanation: "Red flags everywhere! Research shows professional design with vouchers attracts 5x more victims than plain posters. Real university studies include specific department names, not vague 'research institutes'."
   },
   {
     id: 3,
@@ -51,669 +53,584 @@ const scenarios: Scenario[] = [
 ];
 
 const styles = `
-  .game-container {
+  .qr-game-container {
+    width: 100%;
     max-width: 42rem;
     margin: 0 auto;
-    padding: 1.5rem;
-    background: linear-gradient(to bottom right, #eff6ff, #e0e7ff);
-    border-radius: 0.75rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   }
 
-  .game-container-white {
-    max-width: 42rem;
-    margin: 0 auto;
-    padding: 1.5rem;
-    background: white;
-    border-radius: 0.75rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  }
-
-  .text-center {
-    text-align: center;
-  }
-
-  .mb-6 {
-    margin-bottom: 1.5rem;
-  }
-
-  .mb-4 {
-    margin-bottom: 1rem;
-  }
-
-  .mb-3 {
-    margin-bottom: 0.75rem;
-  }
-
-  .mb-2 {
-    margin-bottom: 0.5rem;
-  }
-
-  .mb-1 {
-    margin-bottom: 0.25rem;
-  }
-
-  .mt-1 {
-    margin-top: 0.25rem;
-  }
-
-  .mt-2 {
-    margin-top: 0.5rem;
-  }
-
-  .mr-2 {
-    margin-right: 0.5rem;
-  }
-
-  .mr-3 {
-    margin-right: 0.75rem;
-  }
-
-  .mx-auto {
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .icon-large {
-    width: 4rem;
-    height: 4rem;
-    margin: 0 auto 1rem;
-    color: #4f46e5;
-  }
-
-  .icon-xlarge {
-    width: 5rem;
-    height: 5rem;
-    margin: 0 auto 1rem;
-    color: #4f46e5;
-  }
-
-  .icon-medium {
-    width: 1.25rem;
-    height: 1.25rem;
-    color: #10b981;
-    flex-shrink: 0;
-  }
-
-  .icon-medium-indigo {
-    width: 1.25rem;
-    height: 1.25rem;
-    color: #4f46e5;
-    flex-shrink: 0;
-  }
-
-  .icon-small {
-    width: 1rem;
-    height: 1rem;
-  }
-
-  .icon-small-white {
-    width: 1rem;
-    height: 1rem;
-    color: white;
-  }
-
-  .icon-alert {
-    width: 1.25rem;
-    height: 1.25rem;
-    color: #f59e0b;
-    flex-shrink: 0;
-  }
-
-  .icon-result {
-    width: 1.5rem;
-    height: 1.5rem;
-    flex-shrink: 0;
-  }
-
-  .icon-result-green {
-    width: 1.5rem;
-    height: 1.5rem;
-    color: #059669;
-    flex-shrink: 0;
-  }
-
-  .icon-result-red {
-    width: 1.5rem;
-    height: 1.5rem;
-    color: #dc2626;
-    flex-shrink: 0;
-  }
-
-  .title-large {
-    font-size: 1.875rem;
-    font-weight: bold;
-    color: #1f2937;
-    margin-bottom: 0.5rem;
-  }
-
-  .title-xl {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 0.75rem;
-  }
-
-  .text-gray {
-    color: #4b5563;
-  }
-
-  .text-gray-dark {
-    color: #374151;
-  }
-
-  .text-gray-medium {
-    color: #6b7280;
-  }
-
-  .card-white {
-    background: white;
+  .qr-card {
+    background: #020617;
+    border: 1px solid #334155;
     border-radius: 0.5rem;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  }
-
-  .list-item {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     display: flex;
-    align-items: flex-start;
-    margin-bottom: 0.5rem;
-  }
-
-  .list-text {
-    color: #374151;
-  }
-
-  .alert-box {
-    background: #fffbeb;
-    border-left: 4px solid #f59e0b;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .alert-content {
-    display: flex;
-    align-items: flex-start;
-  }
-
-  .alert-text {
-    font-size: 0.875rem;
-    color: #92400e;
-  }
-
-  .btn-primary {
-    width: 100%;
-    background: #4f46e5;
-    color: white;
-    font-weight: 600;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  }
-
-  .btn-primary:hover {
-    background: #4338ca;
-  }
-
-  .header-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-  }
-
-  .header-text {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #4b5563;
-  }
-
-  .score-badge {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #4f46e5;
-  }
-
-  .poster-container {
-    width: 100%;
-    height: 12rem;
-    border-radius: 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.875rem;
-    font-weight: 500;
-    margin-bottom: 1.5rem;
-  }
-
-  .poster1 {
-    background: linear-gradient(to bottom right, #ef4444, #f97316);
-    color: white;
-    position: relative;
+    flex-direction: column;
     overflow: hidden;
   }
 
-  .poster1-pattern {
-    position: absolute;
-    inset: 0;
-    opacity: 0.1;
+  .qr-card-header {
+    border-bottom: 1px solid rgba(251, 146, 60, 0.3);
+    padding: 1rem;
+    background: linear-gradient(to right, rgba(15, 23, 42, 0.5), rgba(23, 37, 84, 0.3), rgba(69, 26, 3, 0.2));
   }
 
-  .poster1-border-tl {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-    width: 4rem;
-    height: 4rem;
-    border: 4px solid white;
-  }
-
-  .poster1-border-br {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    width: 4rem;
-    height: 4rem;
-    border: 4px solid white;
-  }
-
-  .poster1-content {
-    text-align: center;
-    position: relative;
-    z-index: 10;
-    padding: 1.5rem;
-  }
-
-  .poster1-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-  }
-
-  .poster1-subtitle {
-    font-size: 1.125rem;
-    margin-bottom: 1rem;
-  }
-
-  .poster-qr {
-    width: 6rem;
-    height: 6rem;
-    background: white;
-    margin: 0 auto 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .poster-qr-inner {
-    width: 5rem;
-    height: 5rem;
-    background: black;
-  }
-
-  .poster1-footer {
-    font-size: 0.75rem;
-  }
-
-  .poster2 {
-    background: linear-gradient(to bottom right, #60a5fa, #2563eb);
-    color: white;
-  }
-
-  .poster2-content {
-    text-align: center;
-    padding: 1.5rem;
-  }
-
-  .poster2-title {
-    font-size: 1.25rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-  }
-
-  .poster2-subtitle {
-    font-size: 0.875rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .poster2-qr {
-    width: 6rem;
-    height: 6rem;
-    background: white;
-    margin: 0 auto 0.75rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .poster2-voucher {
-    background: #fbbf24;
-    color: #1e3a8a;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: bold;
-    display: inline-block;
-  }
-
-  .poster2-footer {
-    font-size: 0.75rem;
-    margin-top: 0.5rem;
-    opacity: 0.8;
-  }
-
-  .poster-menu {
-    background: linear-gradient(to bottom right, #fef3c7, #fde68a);
-    color: #78350f;
-    border: 4px solid #92400e;
-  }
-
-  .poster-menu-content {
-    text-align: center;
-    padding: 1.5rem;
-  }
-
-  .poster-menu-title {
-    font-size: 1.5rem;
-    font-family: serif;
-    font-weight: bold;
-    margin-bottom: 0.25rem;
-  }
-
-  .poster-menu-est {
-    font-size: 0.875rem;
-    margin-bottom: 1rem;
-  }
-
-  .poster-menu-subtitle {
-    font-size: 1.125rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-  }
-
-  .poster-menu-qr {
-    width: 6rem;
-    height: 6rem;
-    background: white;
-    margin: 0 auto 0.75rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #92400e;
-  }
-
-  .poster-menu-footer {
-    font-size: 0.75rem;
-  }
-
-  .poster-menu-url {
-    font-size: 0.75rem;
-    margin-top: 0.25rem;
-    opacity: 0.7;
-  }
-
-  .poster-parking {
-    background: #e5e7eb;
-    border: 2px solid #9ca3af;
-    position: relative;
-  }
-
-  .poster-parking-bg {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom right, #d1d5db, #9ca3af);
-    opacity: 0.5;
-  }
-
-  .poster-parking-content {
-    text-align: center;
-    position: relative;
-    z-index: 10;
+  .qr-card-header-intro {
     padding: 1rem;
   }
 
-  .poster-parking-title {
-    font-size: 1.25rem;
-    font-weight: bold;
-    color: #1f2937;
-    margin-bottom: 0.5rem;
-  }
-
-  .poster-parking-subtitle {
-    font-size: 0.875rem;
-    color: #374151;
+  .qr-card-header-flex {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
     margin-bottom: 0.75rem;
   }
 
-  .poster-parking-qr {
-    width: 7rem;
-    height: 7rem;
-    background: white;
-    margin: 0 auto 0.5rem;
+  .qr-card-header-flex-between {
     display: flex;
     align-items: center;
-    justify-content: center;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    transform: rotate(2deg);
+    justify-content: space-between;
   }
 
-  .poster-parking-footer {
-    font-size: 0.75rem;
-    color: #dc2626;
-    font-weight: 600;
+  .qr-blob-container {
+    position: relative;
   }
 
-  .context-box {
-    background: #f9fafb;
+  .qr-blob-glow {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    filter: blur(1rem);
+    background: rgba(251, 191, 36, 0.2);
+  }
+
+  .qr-blob-glow-blue {
+    background: rgba(59, 130, 246, 0.2);
+  }
+
+  .qr-title {
+    color: #f1f5f9;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    margin: 0;
+  }
+
+  .qr-title-large {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  .qr-subtitle {
+    color: #94a3b8;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    margin: 0;
+  }
+
+  .qr-card-content {
+    padding: 1rem;
+    background: linear-gradient(to bottom, #020617, #0f172a);
+    overflow-y: auto;
+  }
+
+  .qr-space-y {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .qr-info-box {
+    background: linear-gradient(to bottom right, rgba(69, 26, 3, 0.5), rgba(124, 45, 18, 0.3));
+    border: 1px solid rgba(217, 119, 6, 0.5);
     border-radius: 0.5rem;
     padding: 1rem;
-    margin-bottom: 1.5rem;
   }
 
-  .context-text {
-    color: #1f2937;
-    font-weight: 500;
-  }
-
-  .inspect-header {
+  .qr-info-header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     margin-bottom: 0.75rem;
   }
 
-  .inspect-title {
-    font-weight: 600;
-    color: #1f2937;
+  .qr-info-title {
+    color: #fef3c7;
+    font-size: 1rem;
+    margin: 0;
   }
 
-  .flags-container {
+  .qr-info-items {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
   }
 
-  .flag-button {
-    width: 100%;
-    text-align: left;
+  .qr-info-item {
+    display: flex;
+    align-items: start;
+    gap: 0.5rem;
+    color: #e2e8f0;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  .qr-icon-green {
+    color: #4ade80;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+
+  .qr-icon-blue {
+    color: #60a5fa;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+
+  .qr-icon-orange {
+    color: #fb923c;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+
+  .qr-icon-amber {
+    color: #fbbf24;
+  }
+
+  .qr-alert-box {
+    background: rgba(124, 45, 18, 0.3);
+    border-left: 4px solid #f97316;
     padding: 0.75rem;
-    border-radius: 0.5rem;
-    border: 2px solid;
+    border-radius: 0.25rem;
+  }
+
+  .qr-alert-content {
+    display: flex;
+    align-items: start;
+    gap: 0.5rem;
+  }
+
+  .qr-alert-text {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: #fed7aa;
+  }
+
+  .qr-button {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(to right, #2563eb, #1d4ed8);
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
+  }
+
+  .qr-button:hover {
+    background: linear-gradient(to right, #1d4ed8, #1e40af);
+  }
+
+  .qr-button-green {
+    background: linear-gradient(to right, #16a34a, #15803d);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .qr-button-green:hover {
+    background: linear-gradient(to right, #15803d, #166534);
+  }
+
+  .qr-button-red {
+    background: linear-gradient(to right, #dc2626, #b91c1c);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .qr-button-red:hover {
+    background: linear-gradient(to right, #b91c1c, #991b1b);
+  }
+
+  .qr-button-icon {
+    background: transparent;
+    border: 1px solid rgba(194, 65, 12, 0.5);
+    color: #f97316;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .qr-button-icon:hover {
+    background: rgba(124, 45, 18, 0.3);
+    border-color: #ea580c;
+  }
+
+  .qr-poster-container {
+    width: 100%;
+    min-height: 14rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    border: 2px solid;
+    position: relative;
+    overflow: visible;
+    padding: 0.5rem 0;
+  }
+
+  .qr-poster-wifi {
+    background: linear-gradient(to bottom right, #dc2626, #ea580c);
+    border-color: rgba(185, 28, 28, 0.5);
+  }
+
+  .qr-poster-survey {
+    background: linear-gradient(to bottom right, #3b82f6, #1d4ed8);
+    border-color: rgba(30, 64, 175, 0.5);
+  }
+
+  .qr-poster-menu {
+    background: linear-gradient(to bottom right, #fef3c7, #fde047);
+    border-color: #78350f;
+  }
+
+  .qr-poster-parking {
+    background: linear-gradient(to bottom right, #d1d5db, #9ca3af);
+    border-color: #6b7280;
+  }
+
+  .qr-poster-content {
+    text-align: center;
+    position: relative;
+    z-index: 10;
+    padding: 1rem;
+  }
+
+  .qr-poster-pattern {
+    position: absolute;
+    inset: 0;
+    opacity: 0.1;
+  }
+
+  .qr-poster-pattern-box {
+    position: absolute;
+    width: 3rem;
+    height: 3rem;
+    border: 4px solid white;
+  }
+
+  .qr-poster-pattern-box-tl {
+    top: 0.5rem;
+    left: 0.5rem;
+  }
+
+  .qr-poster-pattern-box-br {
+    bottom: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .qr-poster-pattern-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom right, #9ca3af, #6b7280);
+    opacity: 0.5;
+  }
+
+  .qr-poster-title {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    margin-bottom: 0.25rem;
+    color: white;
+  }
+
+  .qr-poster-title-menu {
+    font-family: Georgia, serif;
+    color: #451a03;
+  }
+
+  .qr-poster-title-parking {
+    color: #111827;
+  }
+
+  .qr-poster-subtitle {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: white;
+  }
+
+  .qr-poster-subtitle-menu {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: #451a03;
+  }
+
+  .qr-poster-subtitle-parking {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: #111827;
+  }
+
+  .qr-poster-qr {
+    width: 4rem;
+    height: 4rem;
     background: white;
+    margin: 0 auto 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .flag-button-inactive {
-    border-color: #e5e7eb;
-    color: #374151;
+  .qr-poster-qr-menu {
+    border: 2px solid #78350f;
   }
 
-  .flag-button-inactive:hover {
-    border-color: #d1d5db;
+  .qr-poster-qr-parking {
+    width: 5rem;
+    height: 5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: rotate(2deg);
   }
 
-  .flag-button-active {
-    border-color: #4f46e5;
-    background: #eef2ff;
-    color: #3730a3;
+  .qr-poster-qr-inner {
+    width: 3.5rem;
+    height: 3.5rem;
+    background: black;
   }
 
-  .flag-content {
+  .qr-poster-qr-inner-parking {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .qr-poster-badge {
+    background: #facc15;
+    color: #1e3a8a;
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    display: inline-block;
+  }
+
+  .qr-poster-footer {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    margin-top: 0.25rem;
+    color: white;
+  }
+
+  .qr-poster-footer-menu {
+    opacity: 0.7;
+    color: #451a03;
+  }
+
+  .qr-poster-footer-parking {
+    color: #dc2626;
+  }
+
+  .qr-context-box {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(51, 65, 85, 0.5);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+  }
+
+  .qr-context-text {
+    color: #e2e8f0;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    margin: 0;
+  }
+
+  .qr-clues-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .qr-clues-title {
+    color: #f1f5f9;
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  .qr-clues-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .qr-clue-button {
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: 2px solid;
+    background: rgba(30, 41, 59, 0.3);
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .qr-clue-button:hover {
+    border-color: #475569;
+  }
+
+  .qr-clue-button-selected {
+    border-color: #3b82f6;
+    background: rgba(30, 58, 138, 0.3);
+    color: #93c5fd;
+  }
+
+  .qr-clue-button-content {
     display: flex;
     align-items: center;
     gap: 0.5rem;
   }
 
-  .checkbox {
-    width: 1.25rem;
-    height: 1.25rem;
-    border-radius: 0.25rem;
+  .qr-checkbox {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.125rem;
     border: 2px solid;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-color: #475569;
   }
 
-  .checkbox-inactive {
-    border-color: #d1d5db;
+  .qr-checkbox-selected {
+    border-color: #3b82f6;
+    background: #3b82f6;
   }
 
-  .checkbox-active {
-    border-color: #4f46e5;
-    background: #4f46e5;
-  }
-
-  .flag-text {
+  .qr-clue-text {
     font-size: 0.875rem;
+    line-height: 1.25rem;
   }
 
-  .divider {
-    border-top: 1px solid #e5e7eb;
-    padding-top: 1.5rem;
+  .qr-divider {
+    border-top: 1px solid rgba(51, 65, 85, 0.5);
+    padding-top: 1rem;
   }
 
-  .question-text {
+  .qr-question {
     text-align: center;
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 1rem;
+    color: #e2e8f0;
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
   }
 
-  .button-grid {
+  .qr-button-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
-  .btn-safe {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    background: #10b981;
-    color: white;
-    font-weight: 600;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-
-  .btn-safe:hover {
-    background: #059669;
-  }
-
-  .btn-scam {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    background: #ef4444;
-    color: white;
-    font-weight: 600;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-
-  .btn-scam:hover {
-    background: #dc2626;
-  }
-
-  .result-box-correct {
-    border-radius: 0.5rem;
-    padding: 1rem;
-    background: #f0fdf4;
-    border: 2px solid #10b981;
-  }
-
-  .result-box-incorrect {
-    border-radius: 0.5rem;
-    padding: 1rem;
-    background: #fef2f2;
-    border: 2px solid #ef4444;
-  }
-
-  .result-content {
-    display: flex;
-    align-items: flex-start;
     gap: 0.75rem;
   }
 
-  .result-title-correct {
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-    color: #065f46;
+  .qr-result-box {
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    border: 2px solid;
   }
 
-  .result-title-incorrect {
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-    color: #991b1b;
+  .qr-result-box-correct {
+    background: rgba(20, 83, 45, 0.3);
+    border-color: rgba(22, 163, 74, 0.5);
   }
 
-  .result-text-correct {
-    font-size: 0.875rem;
-    color: #047857;
+  .qr-result-box-incorrect {
+    background: rgba(69, 10, 10, 0.3);
+    border-color: rgba(220, 38, 38, 0.5);
   }
 
-  .result-text-incorrect {
-    font-size: 0.875rem;
-    color: #b91c1c;
-  }
-
-  .space-y-4 > * + * {
-    margin-top: 1rem;
-  }
-
-  .percentage-display {
-    font-size: 3rem;
-    font-weight: bold;
-    color: #4f46e5;
-    margin-bottom: 0.5rem;
-  }
-
-  .space-y-3 > * + * {
-    margin-top: 0.75rem;
-  }
-
-  .takeaway-item {
+  .qr-result-content {
     display: flex;
-    align-items: flex-start;
+    align-items: start;
+    gap: 0.5rem;
   }
 
-  .takeaway-text {
-    color: #374151;
+  .qr-icon-result-correct {
+    color: #4ade80;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+
+  .qr-icon-result-incorrect {
+    color: #f87171;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+
+  .qr-result-title {
+    margin-bottom: 0.25rem;
+    margin-top: 0;
+  }
+
+  .qr-result-title-correct {
+    color: #86efac;
+  }
+
+  .qr-result-title-incorrect {
+    color: #fca5a5;
+  }
+
+  .qr-result-text {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    margin: 0;
+  }
+
+  .qr-result-text-correct {
+    color: #bbf7d0;
+  }
+
+  .qr-result-text-incorrect {
+    color: #fecaca;
+  }
+
+  .qr-score-container {
+    text-align: center;
+  }
+
+  .qr-score-icon {
+    color: #fbbf24;
+    margin: 0 auto 0.75rem;
+  }
+
+  .qr-score-percentage {
+    font-size: 3rem;
+    line-height: 1;
+    color: #60a5fa;
+    margin-bottom: 0.5rem;
+  }
+
+  .qr-score-text {
+    color: #cbd5e1;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    margin: 0;
+  }
+
+  .qr-score-detail {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #94a3b8;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
   }
 `;
 
@@ -771,72 +688,72 @@ const QRScamGame: React.FC = () => {
     switch(type) {
       case "poster1":
         return (
-          <div className="poster-container poster1">
-            <div className="poster1-pattern">
-              <div className="poster1-border-tl"></div>
-              <div className="poster1-border-br"></div>
+          <div className="qr-poster-container qr-poster-wifi">
+            <div className="qr-poster-pattern">
+              <div className="qr-poster-pattern-box qr-poster-pattern-box-tl"></div>
+              <div className="qr-poster-pattern-box qr-poster-pattern-box-br"></div>
             </div>
-            <div className="poster1-content">
-              <div className="poster1-title">FREE WIFI!</div>
-              <div className="poster1-subtitle">Scan for instant access</div>
-              <div className="poster-qr">
-                <div className="poster-qr-inner"></div>
+            <div className="qr-poster-content" style={{ color: 'white' }}>
+              <div className="qr-poster-title">FREE WIFI!</div>
+              <div className="qr-poster-subtitle">Scan for instant access</div>
+              <div className="qr-poster-qr">
+                <div className="qr-poster-qr-inner"></div>
               </div>
-              <div className="poster1-footer">Connect now • No password</div>
+              <div className="qr-poster-footer" style={{ fontSize: '0.75rem' }}>Connect now • No password</div>
             </div>
           </div>
         );
       
       case "poster2":
         return (
-          <div className="poster-container poster2">
-            <div className="poster2-content">
-              <div className="poster2-title">University Research Survey</div>
-              <div className="poster2-subtitle">Impact of Inflation Study</div>
-              <div className="poster2-qr">
-                <div className="poster-qr-inner"></div>
+          <div className="qr-poster-container qr-poster-survey">
+            <div className="qr-poster-content" style={{ color: 'white' }}>
+              <div style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>University Research Survey</div>
+              <div style={{ fontSize: '0.75rem', marginBottom: '0.5rem' }}>Impact of Inflation Study</div>
+              <div className="qr-poster-qr">
+                <div className="qr-poster-qr-inner"></div>
               </div>
-              <div className="poster2-voucher">
+              <div className="qr-poster-badge">
                 WIN €50 AMAZON VOUCHER!
               </div>
-              <div className="poster2-footer">Study-Research Institute</div>
+              <div style={{ fontSize: '0.75rem', marginTop: '0.25rem', opacity: 0.8 }}>Study-Research Institute</div>
             </div>
           </div>
         );
       
       case "menu":
         return (
-          <div className="poster-container poster-menu">
-            <div className="poster-menu-content">
-              <div className="poster-menu-title">Bella Cucina</div>
-              <div className="poster-menu-est">Est. 1985</div>
-              <div className="poster-menu-subtitle">View Our Menu</div>
-              <div className="poster-menu-qr">
-                <div className="poster-qr-inner"></div>
+          <div className="qr-poster-container qr-poster-menu">
+            <div className="qr-poster-content">
+              <div className="qr-poster-title qr-poster-title-menu">Bella Cucina</div>
+              <div className="qr-poster-subtitle qr-poster-subtitle-menu">Est. 1985</div>
+              <div style={{ fontSize: '0.875rem', marginBottom: '0.5rem', color: '#451a03' }}>View Our Menu</div>
+              <div className="qr-poster-qr qr-poster-qr-menu">
+                <div className="qr-poster-qr-inner"></div>
               </div>
-              <div className="poster-menu-footer">Scan to browse our dishes</div>
-              <div className="poster-menu-url">www.bellacucina-restaurant.com</div>
+              <div style={{ fontSize: '0.75rem', color: '#451a03' }}>Scan to browse our dishes</div>
+              <div className="qr-poster-footer qr-poster-footer-menu">www.bellacucina-restaurant.com</div>
             </div>
           </div>
         );
       
       case "parking":
         return (
-          <div className="poster-container poster-parking">
-            <div className="poster-parking-bg"></div>
-            <div className="poster-parking-content">
-              <div className="poster-parking-title">PARKING PAYMENT</div>
-              <div className="poster-parking-subtitle">Quick Pay - Scan Here</div>
-              <div className="poster-parking-qr">
-                <div className="poster-qr-inner"></div>
+          <div className="qr-poster-container qr-poster-parking">
+            <div className="qr-poster-pattern-gradient"></div>
+            <div className="qr-poster-content" style={{ color: '#111827' }}>
+              <div className="qr-poster-title qr-poster-title-parking">PARKING PAYMENT</div>
+              <div className="qr-poster-subtitle qr-poster-subtitle-parking">Quick Pay - Scan Here</div>
+              <div className="qr-poster-qr qr-poster-qr-parking">
+                <div className="qr-poster-qr-inner qr-poster-qr-inner-parking"></div>
               </div>
-              <div className="poster-parking-footer">PAY NOW TO AVOID FINE</div>
+              <div className="qr-poster-footer qr-poster-footer-parking">PAY NOW TO AVOID FINE</div>
             </div>
           </div>
         );
       
       default:
-        return <div className="poster-container">QR Code Poster</div>;
+        return <div className="qr-poster-container">QR Code Poster</div>;
     }
   };
 
@@ -844,42 +761,65 @@ const QRScamGame: React.FC = () => {
     return (
       <>
         <style>{styles}</style>
-        <div className="game-container">
-          <div className="text-center mb-6">
-            <Shield className="icon-large" />
-            <h1 className="title-large">QR Code Scam Detective</h1>
-            <p className="text-gray">Learn to spot malicious QR codes before they fool you</p>
-          </div>
-          
-          <div className="card-white">
-            <h2 className="title-xl">What You'll Learn:</h2>
-            <div className="list-item">
-              <CheckCircle className="icon-medium mr-2" style={{ marginTop: '0.125rem' }} />
-              <span className="list-text">Identify red flags in QR code posters and stickers</span>
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="qr-game-container"
+        >
+          <div className="qr-card">
+            <div className="qr-card-header qr-card-header-intro">
+              <div className="qr-card-header-flex">
+                <div className="qr-blob-container">
+                  <div className="qr-blob-glow"></div>
+                  <ScammerBlobIcon size={50} animate mode="lecturer" />
+                </div>
+                <div>
+                  <h1 className="qr-title">QR Code Scam Detective</h1>
+                  <p className="qr-subtitle">Learn to spot malicious QR codes</p>
+                </div>
+              </div>
             </div>
-            <div className="list-item">
-              <CheckCircle className="icon-medium mr-2" style={{ marginTop: '0.125rem' }} />
-              <span className="list-text">Understand common scam tactics (vouchers, urgency, fake branding)</span>
-            </div>
-            <div className="list-item">
-              <CheckCircle className="icon-medium mr-2" style={{ marginTop: '0.125rem' }} />
-              <span className="list-text">Practice safe QR code scanning habits</span>
-            </div>
-          </div>
 
-          <div className="alert-box">
-            <div className="alert-content">
-              <AlertTriangle className="icon-alert mr-2" style={{ marginTop: '0.125rem' }} />
-              <div className="alert-text">
-                <strong>Did you know?</strong> Research shows that 83% of phishing victims fell for professionally designed QR codes offering vouchers or prizes.
+            <div className="qr-card-content">
+              <div className="qr-space-y">
+                <div className="qr-info-box">
+                  <div className="qr-info-header">
+                    <GraduationCap className="qr-icon-amber" size={20} />
+                    <h2 className="qr-info-title">What You'll Learn:</h2>
+                  </div>
+                  
+                  <div className="qr-info-items">
+                    <div className="qr-info-item">
+                      <CheckCircle className="qr-icon-green" size={16} />
+                      <span>Identify red flags in QR code posters</span>
+                    </div>
+                    <div className="qr-info-item">
+                      <CheckCircle className="qr-icon-green" size={16} />
+                      <span>Understand common scam tactics</span>
+                    </div>
+                    <div className="qr-info-item">
+                      <CheckCircle className="qr-icon-green" size={16} />
+                      <span>Practice safe scanning habits</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="qr-alert-box">
+                  <div className="qr-alert-content">
+                    <AlertTriangle className="qr-icon-orange" size={16} />
+                    <div className="qr-alert-text">
+                      Vouchers and prizes are powerful hooks for QR scams.
+                    </div>
+                  </div>
+                </div>
+
+                <button onClick={startGame} className="qr-button">
+                  Start Training
+                </button>
               </div>
             </div>
           </div>
-
-          <button onClick={startGame} className="btn-primary">
-            Start Training
-          </button>
-        </div>
+        </motion.div>
       </>
     );
   }
@@ -891,94 +831,114 @@ const QRScamGame: React.FC = () => {
     return (
       <>
         <style>{styles}</style>
-        <div className="game-container-white">
-          <div className="header-row">
-            <div className="header-text">
-              Scenario {currentScenario + 1} of {scenarios.length}
-            </div>
-            <div className="score-badge">
-              <Award className="icon-small" />
-              Score: {score}/{scenarios.length}
-            </div>
-          </div>
-
-          <div className="mb-6">
-            {renderPosterVisual(scenario.image)}
-          </div>
-
-          <div className="context-box">
-            <p className="context-text">{scenario.context}</p>
-          </div>
-
-          {!showExplanation && (
-            <>
-              <div className="mb-6">
-                <div className="inspect-header">
-                  <Eye className="icon-medium-indigo" />
-                  <h3 className="inspect-title">Inspect for clues:</h3>
-                </div>
-                <div className="flags-container">
-                  {allFlags.map((flag, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => toggleFlag(idx)}
-                      className={`flag-button ${foundFlags.has(idx) ? 'flag-button-active' : 'flag-button-inactive'}`}
-                    >
-                      <div className="flag-content">
-                        <div className={`checkbox ${foundFlags.has(idx) ? 'checkbox-active' : 'checkbox-inactive'}`}>
-                          {foundFlags.has(idx) && <CheckCircle className="icon-small-white" />}
-                        </div>
-                        <span className="flag-text">{flag}</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="divider">
-                <p className="question-text">
-                  Would you scan this QR code?
-                </p>
-                <div className="button-grid">
-                  <button onClick={() => makeChoice('safe')} className="btn-safe">
-                    <CheckCircle className="icon-medium" />
-                    Safe to Scan
-                  </button>
-                  <button onClick={() => makeChoice('scam')} className="btn-scam">
-                    <XCircle className="icon-medium" />
-                    It's a Scam!
-                  </button>
-                </div>
-              </div>
-            </>
-          )}
-
-          {showExplanation && (
-            <div className="space-y-4">
-              <div className={choices[choices.length - 1] ? 'result-box-correct' : 'result-box-incorrect'}>
-                <div className="result-content">
-                  {choices[choices.length - 1] ? (
-                    <CheckCircle className="icon-result-green" />
-                  ) : (
-                    <XCircle className="icon-result-red" />
-                  )}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="qr-game-container"
+        >
+          <div className="qr-card">
+            <div className="qr-card-header">
+              <div className="qr-card-header-flex-between">
+                <div className="qr-card-header-flex">
+                  <div className="qr-blob-container">
+                    <div className="qr-blob-glow qr-blob-glow-blue"></div>
+                    <ScammerBlobIcon size={40} animate />
+                  </div>
                   <div>
-                    <h3 className={choices[choices.length - 1] ? 'result-title-correct' : 'result-title-incorrect'}>
-                      {choices[choices.length - 1] ? 'Correct!' : 'Not quite!'}
-                    </h3>
-                    <p className={choices[choices.length - 1] ? 'result-text-correct' : 'result-text-incorrect'}>
-                      {scenario.explanation}
-                    </p>
+                    <h2 className="qr-title">Scenario {currentScenario + 1}/{scenarios.length}</h2>
+                    <div className="qr-score-detail">
+                      <Award size={12} />
+                      Score: {score}/{scenarios.length}
+                    </div>
                   </div>
                 </div>
               </div>
-
-              <button onClick={nextScenario} className="btn-primary">
-                {currentScenario < scenarios.length - 1 ? 'Next Scenario' : 'See Results'}
-              </button>
             </div>
-          )}
-        </div>
+
+            <div className="qr-card-content">
+              <div className="qr-space-y">
+                {renderPosterVisual(scenario.image)}
+
+                <div className="qr-context-box">
+                  <p className="qr-context-text">{scenario.context}</p>
+                </div>
+
+                {!showExplanation && (
+                  <>
+                    <div>
+                      <div className="qr-clues-header">
+                        <Eye className="qr-icon-blue" size={16} />
+                        <h3 className="qr-clues-title">Inspect for clues:</h3>
+                      </div>
+                      <div className="qr-clues-list">
+                        {allFlags.map((flag, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => toggleFlag(idx)}
+                            className={`qr-clue-button ${foundFlags.has(idx) ? 'qr-clue-button-selected' : ''}`}
+                          >
+                            <div className="qr-clue-button-content">
+                              <div className={`qr-checkbox ${foundFlags.has(idx) ? 'qr-checkbox-selected' : ''}`}>
+                                {foundFlags.has(idx) && <CheckCircle size={12} color="white" />}
+                              </div>
+                              <span className="qr-clue-text">{flag}</span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="qr-divider">
+                      <p className="qr-question">
+                        Would you scan this QR code?
+                      </p>
+                      <div className="qr-button-grid">
+                        <button onClick={() => makeChoice('safe')} className="qr-button qr-button-green">
+                          <CheckCircle size={16} />
+                          Safe
+                        </button>
+                        <button onClick={() => makeChoice('scam')} className="qr-button qr-button-red">
+                          <XCircle size={16} />
+                          Scam
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {showExplanation && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="qr-space-y"
+                  >
+                    <div className={`qr-result-box ${choices[choices.length - 1] ? 'qr-result-box-correct' : 'qr-result-box-incorrect'}`}>
+                      <div className="qr-result-content">
+                        {choices[choices.length - 1] ? (
+                          <CheckCircle className="qr-icon-result-correct" size={20} />
+                        ) : (
+                          <XCircle className="qr-icon-result-incorrect" size={20} />
+                        )}
+                        <div>
+                          <h3 className={`qr-result-title ${choices[choices.length - 1] ? 'qr-result-title-correct' : 'qr-result-title-incorrect'}`}>
+                            {choices[choices.length - 1] ? 'Correct!' : 'Not quite!'}
+                          </h3>
+                          <p className={`qr-result-text ${choices[choices.length - 1] ? 'qr-result-text-correct' : 'qr-result-text-incorrect'}`}>
+                            {scenario.explanation}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button onClick={nextScenario} className="qr-button">
+                      {currentScenario < scenarios.length - 1 ? 'Next Scenario' : 'See Results'}
+                    </button>
+                  </motion.div>
+                )}
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </>
     );
   }
@@ -989,50 +949,81 @@ const QRScamGame: React.FC = () => {
     return (
       <>
         <style>{styles}</style>
-        <div className="game-container">
-          <div className="text-center mb-6">
-            <Award className="icon-xlarge" />
-            <h2 className="title-large">Training Complete!</h2>
-            <div className="percentage-display">{percentage}%</div>
-            <p className="text-gray">You got {score} out of {scenarios.length} correct</p>
-          </div>
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="qr-game-container"
+        >
+          <div className="qr-card">
+            <div className="qr-card-header">
+              <div className="qr-card-header-flex-between">
+                <div className="qr-card-header-flex">
+                  <div className="qr-blob-container">
+                    <div className="qr-blob-glow"></div>
+                    <ScammerBlobIcon size={50} animate mode="lecturer" />
+                  </div>
+                  <div>
+                    <h1 className="qr-title qr-title-large">Training Complete!</h1>
+                    <p className="qr-subtitle">Professor Scammerblob</p>
+                  </div>
+                </div>
+                <button onClick={startGame} className="qr-button qr-button-icon">
+                  <RotateCcw size={16} />
+                </button>
+              </div>
+            </div>
 
-          <div className="card-white">
-            <h3 className="title-xl">Key Takeaways:</h3>
-            <div className="space-y-3">
-              <div className="takeaway-item">
-                <Shield className="icon-medium-indigo mr-3" style={{ marginTop: '0.125rem' }} />
-                <span className="takeaway-text"><strong>Check for official branding:</strong> Legitimate QR codes have clear company logos and contact information</span>
-              </div>
-              <div className="takeaway-item">
-                <Shield className="icon-medium-indigo mr-3" style={{ marginTop: '0.125rem' }} />
-                <span className="takeaway-text"><strong>Be wary of prizes/vouchers:</strong> Scammers use "too good to be true" offers as bait</span>
-              </div>
-              <div className="takeaway-item">
-                <Shield className="icon-medium-indigo mr-3" style={{ marginTop: '0.125rem' }} />
-                <span className="takeaway-text"><strong>Look for stickers:</strong> Fake QR stickers placed over legitimate ones are a major red flag</span>
-              </div>
-              <div className="takeaway-item">
-                <Shield className="icon-medium-indigo mr-3" style={{ marginTop: '0.125rem' }} />
-                <span className="takeaway-text"><strong>Preview URLs:</strong> Most phone cameras show you the URL before opening it - check it!</span>
-              </div>
-              <div className="takeaway-item">
-                <Shield className="icon-medium-indigo mr-3" style={{ marginTop: '0.125rem' }} />
-                <span className="takeaway-text"><strong>Trust your instincts:</strong> If something feels off, don't scan it</span>
+            <div className="qr-card-content">
+              <div className="qr-space-y">
+                <div className="qr-score-container">
+                  <Award className="qr-score-icon" size={64} />
+                  <div className="qr-score-percentage">{percentage}%</div>
+                  <p className="qr-score-text">You got {score} out of {scenarios.length} correct</p>
+                </div>
+
+                <div className="qr-info-box">
+                  <div className="qr-info-header">
+                    <GraduationCap className="qr-icon-amber" size={20} />
+                    <h2 className="qr-info-title">Key Takeaways:</h2>
+                  </div>
+                  
+                  <div className="qr-info-items">
+                    <div className="qr-info-item">
+                      <Shield className="qr-icon-blue" size={16} />
+                      <span><strong>Check for official branding</strong> - Legitimate QR codes have clear logos</span>
+                    </div>
+                    <div className="qr-info-item">
+                      <Shield className="qr-icon-blue" size={16} />
+                      <span><strong>Beware prizes/vouchers</strong> - Too good to be true offers are bait</span>
+                    </div>
+                    <div className="qr-info-item">
+                      <Shield className="qr-icon-blue" size={16} />
+                      <span><strong>Look for stickers</strong> - Fake QR stickers are a major red flag</span>
+                    </div>
+                    <div className="qr-info-item">
+                      <Shield className="qr-icon-blue" size={16} />
+                      <span><strong>Preview URLs</strong> - Check the URL before opening</span>
+                    </div>
+                    <div className="qr-info-item">
+                      <Shield className="qr-icon-blue" size={16} />
+                      <span><strong>Trust your instincts</strong> - If it feels off, don't scan</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="qr-alert-box">
+                  <p className="qr-alert-text">
+                    Only 25% of people refuse suspicious QR codes. You're now part of the informed minority!
+                  </p>
+                </div>
+
+                <button onClick={startGame} className="qr-button">
+                  Try Again
+                </button>
               </div>
             </div>
           </div>
-
-          <div className="alert-box">
-            <p className="alert-text">
-              <strong>Remember:</strong> Only 25% of people would refuse to scan suspicious QR codes. Now you're part of the informed minority who can spot the dangers!
-            </p>
-          </div>
-
-          <button onClick={startGame} className="btn-primary">
-            Try Again
-          </button>
-        </div>
+        </motion.div>
       </>
     );
   }
