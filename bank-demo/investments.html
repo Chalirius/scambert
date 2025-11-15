@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Investments - SecureBank</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: white;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: white;
+      font-size: 1.5rem;
+    }
+
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .user-name {
+      color: #333;
+      font-weight: 500;
+    }
+
+    .logout-btn {
+      padding: 0.5rem 1rem;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      color: #666;
+      transition: all 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      border-color: #667eea;
+      color: #667eea;
+    }
+
+    nav {
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 0 2rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      display: block;
+      padding: 1rem 0;
+      color: #666;
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: #667eea;
+    }
+
+    .nav-links a.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+      font-size: 2rem;
+      color: #1a1a1a;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      color: #666;
+    }
+
+    .portfolio-summary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      padding: 2rem;
+      color: white;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .portfolio-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 2rem;
+    }
+
+    .portfolio-total {
+      flex: 1;
+    }
+
+    .portfolio-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      margin-bottom: 0.5rem;
+    }
+
+    .portfolio-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .portfolio-change {
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .portfolio-change.positive {
+      color: #10b981;
+    }
+
+    .portfolio-change.negative {
+      color: #ef4444;
+    }
+
+    .portfolio-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-header h2 {
+      font-size: 1.25rem;
+      color: #1a1a1a;
+      font-weight: 600;
+    }
+
+    .view-all-link {
+      color: #667eea;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .view-all-link:hover {
+      text-decoration: underline;
+    }
+
+    .holdings-list {
+      list-style: none;
+    }
+
+    .holding-item {
+      padding: 1.25rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .holding-item:hover {
+      border-color: #667eea;
+      background: #f8f9ff;
+    }
+
+    .holding-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .holding-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+
+    .holding-info {
+      flex: 1;
+    }
+
+    .holding-name {
+      font-weight: 600;
+      color: #333;
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .holding-ticker {
+      color: #999;
+      font-size: 0.85rem;
+    }
+
+    .holding-value {
+      text-align: right;
+    }
+
+    .holding-amount {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: #333;
+      margin-bottom: 0.25rem;
+    }
+
+    .holding-change {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .holding-change.positive {
+      color: #10b981;
+    }
+
+    .holding-change.negative {
+      color: #ef4444;
+    }
+
+    .holding-details {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 0.5rem;
+    }
+
+    .holding-detail {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .detail-label {
+      color: #999;
+    }
+
+    .detail-value {
+      font-weight: 500;
+      color: #333;
+    }
+
+    .action-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .action-btn {
+      padding: 0.875rem;
+      border: 2px solid #667eea;
+      background: white;
+      color: #667eea;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .action-btn:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    .action-btn.primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+    }
+
+    .action-btn.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .performance-chart {
+      background: #f8f9ff;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-style: italic;
+    }
+
+    .quick-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .quick-stat-box {
+      background: #f8f9ff;
+      padding: 1.25rem;
+      border-radius: 10px;
+      border: 2px solid #e8ebff;
+    }
+
+    .quick-stat-label {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 0.5rem;
+    }
+
+    .quick-stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .market-news {
+      list-style: none;
+    }
+
+    .news-item {
+      padding: 1rem 0;
+      border-bottom: 1px solid #e0e0e0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .news-item:hover {
+      background: #f8f9ff;
+      padding-left: 0.5rem;
+      margin-left: -0.5rem;
+      padding-right: 0.5rem;
+      margin-right: -0.5rem;
+    }
+
+    .news-item:last-child {
+      border-bottom: none;
+    }
+
+    .news-title {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.25rem;
+    }
+
+    .news-source {
+      font-size: 0.85rem;
+      color: #999;
+    }
+
+    .investment-options {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .investment-option {
+      padding: 1.25rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .investment-option:hover {
+      border-color: #667eea;
+      background: #f8f9ff;
+    }
+
+    .option-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .option-name {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .option-return {
+      font-weight: 700;
+      color: #10b981;
+    }
+
+    .option-description {
+      font-size: 0.85rem;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .alert-box {
+      background: #e7f3ff;
+      border-left: 4px solid #2196f3;
+      padding: 1rem 1.25rem;
+      border-radius: 6px;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: start;
+      gap: 0.75rem;
+    }
+
+    .alert-icon {
+      font-size: 1.25rem;
+    }
+
+    .alert-content {
+      flex: 1;
+    }
+
+    .alert-title {
+      font-weight: 600;
+      color: #1976d2;
+      margin-bottom: 0.25rem;
+    }
+
+    .alert-text {
+      font-size: 0.9rem;
+      color: #1976d2;
+    }
+
+    @media (max-width: 1200px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .portfolio-stats {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .portfolio-header {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .portfolio-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .quick-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .action-buttons {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        overflow-x: auto;
+        gap: 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      main {
+        padding: 1rem;
+      }
+
+      .portfolio-summary {
+        padding: 1.5rem;
+      }
+
+      .portfolio-value {
+        font-size: 2rem;
+      }
+
+      .portfolio-stats {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .card {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo">
+      <div class="logo-icon">S</div>
+      <div class="logo-text">SecureBank</div>
+    </div>
+    <div class="user-info">
+      <span class="user-name">John Doe</span>
+      <button class="logout-btn">Log Out</button>
+    </div>
+  </header>
+
+  <nav>
+    <ul class="nav-links">
+      <li><a href="./dashboard.html">Overview</a></li>
+      <li><a href="./make_payment.html">Payments</a></li>
+      <li><a href="./accounts.html">Accounts</a></li>
+      <li><a href="#">Cards</a></li>
+      <li><a href="#">Savings</a></li>
+      <li><a href="./investments.html" class="active">Investments</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <h1>Investment Portfolio</h1>
+      <p>Friday, November 14, 2025</p>
+    </div>
+
+    <div class="alert-box">
+      <span class="alert-icon">💡</span>
+      <div class="alert-content">
+        <div class="alert-title">Market Update</div>
+        <div class="alert-text">Major indices are up today. Your portfolio has increased by €234.50 since yesterday.
+        </div>
+      </div>
+    </div>
+
+    <div class="portfolio-summary">
+      <div class="portfolio-header">
+        <div class="portfolio-total">
+          <div class="portfolio-label">Total Portfolio Value</div>
+          <div class="portfolio-value">€45,892.75</div>
+          <div class="portfolio-change positive">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+            +€1,234.50 (+2.76%) Today
+          </div>
+        </div>
+      </div>
+      <div class="portfolio-stats">
+        <div class="stat-item">
+          <div class="stat-value">+12.4%</div>
+          <div class="stat-label">Year to Date</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">€2,150</div>
+          <div class="stat-label">Total Gains</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">8</div>
+          <div class="stat-label">Holdings</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <h2>Your Holdings</h2>
+            <a href="#" class="view-all-link">View All →</a>
+          </div>
+
+          <ul class="holdings-list">
+            <li class="holding-item">
+              <div class="holding-header">
+                <div class="holding-info">
+                  <div class="holding-name">Apple Inc.</div>
+                  <div class="holding-ticker">AAPL • Technology</div>
+                </div>
+                <div class="holding-value">
+                  <div class="holding-amount">€12,450.00</div>
+                  <div class="holding-change positive">+€145.20 (+1.18%)</div>
+                </div>
+              </div>
+              <div class="holding-details">
+                <div class="holding-detail">
+                  <span class="detail-label">Shares</span>
+                  <span class="detail-value">65</span>
+                </div>
+                <div class="holding-detail">
+                  <span class="detail-label">Avg. Cost</span>
+                  <span class="detail-value">€185.20</span>
+                </div>
+                <div class="holding-detail">
+                  <span class="detail-label">Current Price</span>
+                  <span class="detail-value">€191.54</span>
+                </div>
+              </div>
+            </li>
+
+            <li class="holding-item">
+              <div class="holding-header">
+                <div class="holding-info">
+                  <div class="holding-name">Vanguard S&P 500 ETF</div>
+                  <div class="holding-ticker">VOO • Index Fund</div>
+                </div>
+                <div class="holding-value">
+                  <div class="holding-amount">€15,320.50</div>
+                  <div class="holding-change positive">+€234.80 (+1.56%)</div>
+                </div>
+              </div>
+              <div class="holding-details">
+                <div class="holding-detail">
+                  <span class="detail-label">Shares</span>
+                  <span class="detail-value">38</span>
+                </div>
+                <div class="holding-detail">
+                  <span class="detail-label">Avg. Cost</span>
+                  <span class="detail-value">€392.40</span>
+                </div>
+                <div class="holding-detail">
+                  <span class="detail-label">Current Price</span>
+                  <span class="detail-value">€403.17</span>
+                </div>
+              </div>
+            </li>
+
+            <li class="holding-item">
+              <div class="holding-header">
+                <div class="holding-info">
+                  <div class="holding-name">Microsoft Corporation</div>
+                  <div class="holding-ticker">MSFT • Technology</div>
+                </div>
+                <div class="holding-value">
+                  <div class="holding-amount">€8,670.25</div>
+                  <div class="holding-change negative">-€42.30 (-0.49%)</div>
+                </div>
+              </div>
+              <div class="holding-details">
+                <div class="holding-detail">
+                  <span class="detail-label">Shares</span>
+                  <span class="detail-value">22</span>
+                </div>
+                <div class="holding-detail">
+                  <span class="detail-label">Avg. Cost</span>
+                  <span class="detail-value">€385.10</span>
+                </div>
+                <div class="holding-detail">
+                  <span class="detail-label">Current Price</span>
+                  <span class="detail-value">€394.10</span>
+                </div>
+              </div>
+            </li>
+
+            <li class="holding-item">
+              <div class="holding-header">
+                <div class="holding-info">
+                  <div class="holding-name">Tesla Inc.</div>
+                  <div class="holding-ticker">TSLA • Automotive</div>
+                </div>
+                <div class="holding-value">
+                  <div class="holding-amount">€9,452.00</div>
+                  <div class="holding-change positive">+€312.50 (+3.42%)</div>
+                </div>
+              </div>
+              <div class="holding-details">
+                <div class="holding-detail">
+                  <span class="detail-label">Shares</span>
+                  <span class="detail-value">40</span>
+                </div>
+                <div class="holding-detail">
+                  <span class="detail-label">Avg. Cost</span>
+                  <span class="detail-value">€228.45</span>
+                </div>
+                <div class="holding-detail">
+                  <span class="detail-label">Current Price</span>
+                  <span class="detail-value">€236.30</span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card" style="margin-top: 1.5rem;">
+          <div class="card-header">
+            <h2>Portfolio Performance</h2>
+            <select style="padding: 0.5rem; border: 2px solid #e0e0e0; border-radius: 6px; font-weight: 500;">
+              <option>1 Month</option>
+              <option>3 Months</option>
+              <option>6 Months</option>
+              <option>1 Year</option>
+              <option>All Time</option>
+            </select>
+          </div>
+          <div class="performance-chart">
+            Performance chart visualization would appear here
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <h2>Quick Actions</h2>
+          </div>
+          <div class="action-buttons">
+            <button class="action-btn primary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Buy
+            </button>
+            <button class="action-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Sell
+            </button>
+            <button class="action-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+              </svg>
+              Auto-Invest
+            </button>
+            <button class="action-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Reports
+            </button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 1.5rem;">
+          <div class="card-header">
+            <h2>Asset Allocation</h2>
+          </div>
+          <div class="quick-stats">
+            <div class="quick-stat-box">
+              <div class="quick-stat-label">Stocks</div>
+              <div class="quick-stat-value">65%</div>
+            </div>
+            <div class="quick-stat-box">
+              <div class="quick-stat-label">ETFs</div>
+              <div class="quick-stat-value">25%</div>
+            </div>
+            <div class="quick-stat-box">
+              <div class="quick-stat-label">Bonds</div>
+              <div class="quick-stat-value">8%</div>
+            </div>
+            <div class="quick-stat-box">
+              <div class="quick-stat-label">Cash</div>
+              <div class="quick-stat-value">2%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 1.5rem;">
+          <div class="card-header">
+            <h2>Investment Options</h2>
+          </div>
+          <div class="investment-options">
+            <div class="investment-option">
+              <div class="option-header">
+                <span class="option-name">Growth Portfolio</span>
+                <span class="option-return">+15.2%</span>
+              </div>
+              <p class="option-description">Aggressive growth strategy focused on high-potential stocks</p>
+            </div>
+            <div class="investment-option">
+              <div class="option-header">
+                <span class="option-name">Balanced Fund</span>
+                <span class="option-return">+8.7%</span>
+              </div>
+              <p class="option-description">Mix of stocks and bonds for steady returns</p>
+            </div>
+            <div class="investment-option">
+              <div class="option-header">
+                <span class="option-name">ESG Portfolio</span>
+                <span class="option-return">+11.3%</span>
+              </div>
+              <p class="option-description">Sustainable and socially responsible investments</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 1.5rem;">
+          <div class="card-header">
+            <h2>Market News</h2>
+          </div>
+          <ul class="market-news">
+            <li class="news-item">
+              <div class="news-title">Tech Stocks Rally on Strong Earnings</div>
+              <div class="news-source">Financial Times • 2 hours ago</div>
+            </li>
+            <li class="news-item">
+              <div class="news-title">Fed Maintains Interest Rate Decision</div>
+              <div class="news-source">Bloomberg • 4 hours ago</div>
+            </li>
+            <li class="news-item">
+              <div class="news-title">Electric Vehicle Sales Surge in Europe</div>
+              <div class="news-source">Reuters • Yesterday</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+
+</html>

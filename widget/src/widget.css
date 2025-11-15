@@ -1,3 +1,8 @@
+.scamducation-widget {
+  position: absolute;
+  top: 25em;
+  right: 1em;
+}
 
 .widget-header h2 {
   font-size: 16px;

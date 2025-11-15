@@ -1,62 +1,102 @@
-import React, { useState } from 'react';
-import { Shield, AlertTriangle, CheckCircle, XCircle, Eye, Award, RotateCcw, GraduationCap } from 'lucide-react';
-import { motion } from 'motion/react';
-import ScammerBlobIcon from './ScammerBlobIcon';
-import QRCode from 'react-qr-code';
+import React, { useState } from "react"
+import {
+  Shield,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  Eye,
+  Award,
+  RotateCcw,
+  GraduationCap,
+} from "lucide-react"
+import { motion } from "motion/react"
+import ScammerBlobIcon from "./ScammerBlobIcon"
+import QRCode from "react-qr-code"
 
 interface Scenario {
-  id: number;
-  image: string;
-  context: string;
-  redFlags: string[];
-  safePoints: string[];
-  isScam: boolean;
-  explanation: string;
-  link?: { text: string; url: string };
+  id: number
+  image: string
+  context: string
+  redFlags: string[]
+  safePoints: string[]
+  isScam: boolean
+  explanation: string
+  link?: { text: string; url: string }
 }
 
 const scenarios: Scenario[] = [
   {
     id: 1,
     image: "poster1",
-    context: "You receive a text message with this image, claiming you missed a package delivery",
-    redFlags: ["Unsolicited message from unknown number", "Creates false urgency", "Legitimate carriers use tracking numbers, not random QR codes"],
+    context:
+      "You receive a text message with this image, claiming you missed a package delivery",
+    redFlags: [
+      "Unsolicited message from unknown number",
+      "Creates false urgency",
+      "Legitimate carriers use tracking numbers, not random QR codes",
+    ],
     safePoints: [],
     isScam: true,
-    explanation: "Major scam! The HP Wolf Security report noted phishing campaigns masquerading as parcel delivery companies.",
-    link: { text: "See more", url: "https://threatresearch.ext.hp.com/hp-wolf-security-threat-insights-report-q4-2022/" }
+    explanation:
+      "Major scam! The HP Wolf Security report noted phishing campaigns masquerading as parcel delivery companies.",
+    link: {
+      text: "See more",
+      url: "https://threatresearch.ext.hp.com/hp-wolf-security-threat-insights-report-q4-2022/",
+    },
   },
   {
     id: 2,
     image: "poster2",
     context: "At your university campus, you find this research survey poster",
-    redFlags: ["Generic design", "Vague 'research institution' name", "Amazon voucher as bait"],
+    redFlags: [
+      "Generic design",
+      "Vague 'research institution' name",
+      "Amazon voucher as bait",
+    ],
     safePoints: [],
     isScam: true,
-    explanation: "Red flags everywhere! Research shows professional design with vouchers attracts 5x more victims than plain posters. Real university studies include specific departments that you can contact, not vague 'research institutes'."
+    explanation:
+      "Red flags everywhere! Research shows professional design with vouchers attracts 5x more victims than plain posters. Real university studies include specific departments that you can contact, not vague 'research institutes'.",
   },
   {
     id: 3,
     image: "menu",
     context: "Your favorite restaurant has QR codes on tables for their menu",
     redFlags: [],
-    safePoints: ["Official restaurant branding", "Staff confirms it's theirs", "HTTPS secure website"],
+    safePoints: [
+      "Official restaurant branding",
+      "Staff confirms it's theirs",
+      "HTTPS secure website",
+    ],
     isScam: false,
-    explanation: "This is safe! Restaurant menu QR codes became widespread during COVID-19 and remain a trusted, convenient option when verified by staff."
+    explanation:
+      "This is safe! Restaurant menu QR codes became widespread during COVID-19 and remain a trusted, convenient option when verified by staff.",
   },
   {
     id: 4,
     image: "parking",
-    context: "You find this QR code sticker on a parking meter saying 'Pay Here'",
-    redFlags: ["Sticker placed over original", "No official logo", "Unusual payment request"],
+    context:
+      "You find this QR code sticker on a parking meter saying 'Pay Here'",
+    redFlags: [
+      "Sticker placed over original",
+      "No official logo",
+      "Unusual payment request",
+    ],
     safePoints: [],
     isScam: true,
-    explanation: "Major scam alert! Criminals often place fake QR stickers over legitimate payment systems. Always use the official parking meter interface or app, not random stickers."
-  }
-];
+    explanation:
+      "Major scam alert! Criminals often place fake QR stickers over legitimate payment systems. Always use the official parking meter interface or app, not random stickers.",
+  },
+]
 
 const styles = `
   .qr-game-container {
+    opacity: 1;
+    transform: none;
+    position: absolute;
+    top: 69em;
+    right: 1em;
+    z-index: 100;
     width: 100%;
     max-width: 42rem;
     margin: 0 auto;
@@ -635,144 +675,188 @@ const styles = `
     font-size: 0.875rem;
     line-height: 1.25rem;
   }
-`;
+`
 
 const QRScamGame: React.FC = () => {
-  const [gameState, setGameState] = useState<'intro' | 'playing' | 'result' | 'summary'>('intro');
-  const [currentScenario, setCurrentScenario] = useState(0);
-  const [score, setScore] = useState(0);
-  const [choices, setChoices] = useState<boolean[]>([]);
-  const [showExplanation, setShowExplanation] = useState(false);
-  const [foundFlags, setFoundFlags] = useState<Set<number>>(new Set());
+  const [gameState, setGameState] = useState<
+    "intro" | "playing" | "result" | "summary"
+  >("intro")
+  const [currentScenario, setCurrentScenario] = useState(0)
+  const [score, setScore] = useState(0)
+  const [choices, setChoices] = useState<boolean[]>([])
+  const [showExplanation, setShowExplanation] = useState(false)
+  const [foundFlags, setFoundFlags] = useState<Set<number>>(new Set())
 
   const startGame = () => {
-    setGameState('playing');
-    setCurrentScenario(0);
-    setScore(0);
-    setChoices([]);
-    setShowExplanation(false);
-    setFoundFlags(new Set());
-  };
+    setGameState("playing")
+    setCurrentScenario(0)
+    setScore(0)
+    setChoices([])
+    setShowExplanation(false)
+    setFoundFlags(new Set())
+  }
 
-  const makeChoice = (userThinks: 'scam' | 'safe') => {
-    const scenario = scenarios[currentScenario];
-    const correct = (userThinks === 'scam' && scenario.isScam) || (userThinks === 'safe' && !scenario.isScam);
-    
+  const makeChoice = (userThinks: "scam" | "safe") => {
+    const scenario = scenarios[currentScenario]
+    const correct =
+      (userThinks === "scam" && scenario.isScam) ||
+      (userThinks === "safe" && !scenario.isScam)
+
     if (correct) {
-      setScore(score + 1);
+      setScore(score + 1)
     }
-    
-    setChoices([...choices, correct]);
-    setShowExplanation(true);
-  };
+
+    setChoices([...choices, correct])
+    setShowExplanation(true)
+  }
 
   const nextScenario = () => {
-    setShowExplanation(false);
-    setFoundFlags(new Set());
-    
+    setShowExplanation(false)
+    setFoundFlags(new Set())
+
     if (currentScenario < scenarios.length - 1) {
-      setCurrentScenario(currentScenario + 1);
+      setCurrentScenario(currentScenario + 1)
     } else {
-      setGameState('summary');
+      setGameState("summary")
     }
-  };
+  }
 
   const toggleFlag = (index: number) => {
-    const newFlags = new Set(foundFlags);
+    const newFlags = new Set(foundFlags)
     if (newFlags.has(index)) {
-      newFlags.delete(index);
+      newFlags.delete(index)
     } else {
-      newFlags.add(index);
+      newFlags.add(index)
     }
-    setFoundFlags(newFlags);
-  };
+    setFoundFlags(newFlags)
+  }
 
   const renderPosterVisual = (type: string) => {
-    const rickrollUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1";
+    const rickrollUrl =
+      "https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1"
 
-    switch(type) {
+    switch (type) {
       case "poster1":
         return (
           <div className="qr-poster-container qr-poster-wifi">
-            <div className="qr-poster-content" style={{ color: 'white' }}>
+            <div className="qr-poster-content" style={{ color: "white" }}>
               <div className="qr-poster-title">PACKAGE DELIVERY</div>
-              <div className="qr-poster-subtitle">You missed your delivery!</div>
+              <div className="qr-poster-subtitle">
+                You missed your delivery!
+              </div>
               <div className="qr-poster-qr">
-                <div style={{ background: 'white', padding: '8px' }}>
+                <div style={{ background: "white", padding: "8px" }}>
                   <QRCode value={rickrollUrl} size={48} />
                 </div>
               </div>
-              <div className="qr-poster-footer" style={{ fontSize: '0.75rem' }}>Scan to reschedule • Act now!</div>
+              <div className="qr-poster-footer" style={{ fontSize: "0.75rem" }}>
+                Scan to reschedule • Act now!
+              </div>
             </div>
           </div>
-        );
-      
+        )
+
       case "poster2":
         return (
           <div className="qr-poster-container qr-poster-survey">
-            <div className="qr-poster-content" style={{ color: 'white' }}>
-              <div style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>University Research Survey</div>
-              <div style={{ fontSize: '0.75rem', marginBottom: '0.5rem' }}>Impact of Inflation Study</div>
+            <div className="qr-poster-content" style={{ color: "white" }}>
+              <div style={{ fontSize: "1rem", marginBottom: "0.25rem" }}>
+                University Research Survey
+              </div>
+              <div style={{ fontSize: "0.75rem", marginBottom: "0.5rem" }}>
+                Impact of Inflation Study
+              </div>
               <div className="qr-poster-qr">
-                <div style={{ background: 'white', padding: '8px' }}>
+                <div style={{ background: "white", padding: "8px" }}>
                   <QRCode value={rickrollUrl} size={48} />
                 </div>
               </div>
-              <div className="qr-poster-badge">
-                WIN €50 AMAZON VOUCHER!
+              <div className="qr-poster-badge">WIN €50 AMAZON VOUCHER!</div>
+              <div
+                style={{
+                  fontSize: "0.75rem",
+                  marginTop: "0.25rem",
+                  opacity: 0.8,
+                }}
+              >
+                Study-Research Institute
               </div>
-              <div style={{ fontSize: '0.75rem', marginTop: '0.25rem', opacity: 0.8 }}>Study-Research Institute</div>
             </div>
           </div>
-        );
-      
+        )
+
       case "menu":
         return (
           <div className="qr-poster-container qr-poster-menu">
             <div className="qr-poster-content">
-              <div className="qr-poster-title qr-poster-title-menu">Bella Cucina</div>
-              <div className="qr-poster-subtitle qr-poster-subtitle-menu">Est. 1985</div>
-              <div style={{ fontSize: '0.875rem', marginBottom: '0.5rem', color: '#451a03' }}>View Our Menu</div>
+              <div className="qr-poster-title qr-poster-title-menu">
+                Bella Cucina
+              </div>
+              <div className="qr-poster-subtitle qr-poster-subtitle-menu">
+                Est. 1985
+              </div>
+              <div
+                style={{
+                  fontSize: "0.875rem",
+                  marginBottom: "0.5rem",
+                  color: "#451a03",
+                }}
+              >
+                View Our Menu
+              </div>
               <div className="qr-poster-qr qr-poster-qr-menu">
-                <div style={{ background: 'white', padding: '8px' }}>
+                <div style={{ background: "white", padding: "8px" }}>
                   <QRCode value={rickrollUrl} size={48} />
                 </div>
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#451a03' }}>Scan to browse our dishes</div>
-              <div className="qr-poster-footer qr-poster-footer-menu">www.bellacucina-restaurant.com</div>
+              <div style={{ fontSize: "0.75rem", color: "#451a03" }}>
+                Scan to browse our dishes
+              </div>
+              <div className="qr-poster-footer qr-poster-footer-menu">
+                www.bellacucina-restaurant.com
+              </div>
             </div>
           </div>
-        );
-      
+        )
+
       case "parking":
         return (
           <div className="qr-poster-container qr-poster-parking">
             <div className="qr-poster-pattern-gradient"></div>
-            <div className="qr-poster-content" style={{ color: '#111827' }}>
-              <div className="qr-poster-title qr-poster-title-parking">PARKING PAYMENT</div>
-              <div className="qr-poster-subtitle qr-poster-subtitle-parking">Quick Pay - Scan Here</div>
+            <div className="qr-poster-content" style={{ color: "#111827" }}>
+              <div className="qr-poster-title qr-poster-title-parking">
+                PARKING PAYMENT
+              </div>
+              <div className="qr-poster-subtitle qr-poster-subtitle-parking">
+                Quick Pay - Scan Here
+              </div>
               <div className="qr-poster-qr qr-poster-qr-parking">
-                <div style={{ background: 'white', padding: '10px' }}>
+                <div style={{ background: "white", padding: "10px" }}>
                   <QRCode value={rickrollUrl} size={60} />
                 </div>
               </div>
-              <div className="qr-poster-footer qr-poster-footer-parking">PAY NOW TO AVOID FINE</div>
+              <div className="qr-poster-footer qr-poster-footer-parking">
+                PAY NOW TO AVOID FINE
+              </div>
             </div>
           </div>
-        );
-      
-      default:
-        return <div className="qr-poster-container">QR Code Poster</div>;
-    }
-  };
+        )
 
-  if (gameState === 'intro') {
+      default:
+        return <div className="qr-poster-container">QR Code Poster</div>
+    }
+  }
+
+  if (gameState === "intro") {
     return (
       <>
         <style>{styles}</style>
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
+          transition={{
+            delay: 4,
+          }}
           className="qr-game-container"
         >
           <div className="qr-card">
@@ -784,7 +868,9 @@ const QRScamGame: React.FC = () => {
                 </div>
                 <div>
                   <h1 className="qr-title">QR Code Scam Detective</h1>
-                  <p className="qr-subtitle">Learn to spot malicious QR codes</p>
+                  <p className="qr-subtitle">
+                    Learn to spot malicious QR codes
+                  </p>
                 </div>
               </div>
             </div>
@@ -796,7 +882,7 @@ const QRScamGame: React.FC = () => {
                     <GraduationCap className="qr-icon-amber" size={20} />
                     <h2 className="qr-info-title">What You'll Learn:</h2>
                   </div>
-                  
+
                   <div className="qr-info-items">
                     <div className="qr-info-item">
                       <CheckCircle className="qr-icon-green" size={16} />
@@ -830,17 +916,17 @@ const QRScamGame: React.FC = () => {
           </div>
         </motion.div>
       </>
-    );
+    )
   }
 
-  if (gameState === 'playing') {
-    const scenario = scenarios[currentScenario];
-    const allFlags = scenario.isScam ? scenario.redFlags : scenario.safePoints;
-    
+  if (gameState === "playing") {
+    const scenario = scenarios[currentScenario]
+    const allFlags = scenario.isScam ? scenario.redFlags : scenario.safePoints
+
     return (
       <>
         <style>{styles}</style>
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="qr-game-container"
@@ -854,7 +940,9 @@ const QRScamGame: React.FC = () => {
                     <ScammerBlobIcon size={40} animate />
                   </div>
                   <div>
-                    <h2 className="qr-title">Scenario {currentScenario + 1}/{scenarios.length}</h2>
+                    <h2 className="qr-title">
+                      Scenario {currentScenario + 1}/{scenarios.length}
+                    </h2>
                     <div className="qr-score-detail">
                       <Award size={12} />
                       Score: {score}/{scenarios.length}
@@ -882,7 +970,14 @@ const QRScamGame: React.FC = () => {
                       <div className="qr-info-items">
                         {allFlags.map((flag, idx) => (
                           <div key={idx} className="qr-info-item">
-                            <span style={{ color: '#94a3b8', marginRight: '0.5rem' }}>•</span>
+                            <span
+                              style={{
+                                color: "#94a3b8",
+                                marginRight: "0.5rem",
+                              }}
+                            >
+                              •
+                            </span>
                             <span>{flag}</span>
                           </div>
                         ))}
@@ -894,11 +989,17 @@ const QRScamGame: React.FC = () => {
                         Would you scan this QR code?
                       </p>
                       <div className="qr-button-grid">
-                        <button onClick={() => makeChoice('safe')} className="qr-button qr-button-green">
+                        <button
+                          onClick={() => makeChoice("safe")}
+                          className="qr-button qr-button-green"
+                        >
                           <CheckCircle size={16} />
                           Safe
                         </button>
-                        <button onClick={() => makeChoice('scam')} className="qr-button qr-button-red">
+                        <button
+                          onClick={() => makeChoice("scam")}
+                          className="qr-button qr-button-red"
+                        >
                           <XCircle size={16} />
                           Scam
                         </button>
@@ -908,27 +1009,58 @@ const QRScamGame: React.FC = () => {
                 )}
 
                 {showExplanation && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="qr-space-y"
                   >
-                    <div className={`qr-result-box ${choices[choices.length - 1] ? 'qr-result-box-correct' : 'qr-result-box-incorrect'}`}>
+                    <div
+                      className={`qr-result-box ${
+                        choices[choices.length - 1]
+                          ? "qr-result-box-correct"
+                          : "qr-result-box-incorrect"
+                      }`}
+                    >
                       <div className="qr-result-content">
                         {choices[choices.length - 1] ? (
-                          <CheckCircle className="qr-icon-result-correct" size={20} />
+                          <CheckCircle
+                            className="qr-icon-result-correct"
+                            size={20}
+                          />
                         ) : (
-                          <XCircle className="qr-icon-result-incorrect" size={20} />
+                          <XCircle
+                            className="qr-icon-result-incorrect"
+                            size={20}
+                          />
                         )}
                         <div>
-                          <h3 className={`qr-result-title ${choices[choices.length - 1] ? 'qr-result-title-correct' : 'qr-result-title-incorrect'}`}>
-                            {choices[choices.length - 1] ? 'Correct!' : 'Not quite!'}
+                          <h3
+                            className={`qr-result-title ${
+                              choices[choices.length - 1]
+                                ? "qr-result-title-correct"
+                                : "qr-result-title-incorrect"
+                            }`}
+                          >
+                            {choices[choices.length - 1]
+                              ? "Correct!"
+                              : "Not quite!"}
                           </h3>
-                          <p className={`qr-result-text ${choices[choices.length - 1] ? 'qr-result-text-correct' : 'qr-result-text-incorrect'}`}>
+                          <p
+                            className={`qr-result-text ${
+                              choices[choices.length - 1]
+                                ? "qr-result-text-correct"
+                                : "qr-result-text-incorrect"
+                            }`}
+                          >
                             {scenario.explanation}
                           </p>
                           {scenario.link && (
-                            <a href={scenario.link.url} target="_blank" rel="noopener noreferrer" className="qr-result-text">
+                            <a
+                              href={scenario.link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="qr-result-text"
+                            >
                               {scenario.link.text}
                             </a>
                           )}
@@ -937,7 +1069,9 @@ const QRScamGame: React.FC = () => {
                     </div>
 
                     <button onClick={nextScenario} className="qr-button">
-                      {currentScenario < scenarios.length - 1 ? 'Next Scenario' : 'See Results'}
+                      {currentScenario < scenarios.length - 1
+                        ? "Next Scenario"
+                        : "See Results"}
                     </button>
                   </motion.div>
                 )}
@@ -946,16 +1080,16 @@ const QRScamGame: React.FC = () => {
           </div>
         </motion.div>
       </>
-    );
+    )
   }
 
-  if (gameState === 'summary') {
-    const percentage = Math.round((score / scenarios.length) * 100);
-    
+  if (gameState === "summary") {
+    const percentage = Math.round((score / scenarios.length) * 100)
+
     return (
       <>
         <style>{styles}</style>
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="qr-game-container"
@@ -969,11 +1103,16 @@ const QRScamGame: React.FC = () => {
                     <ScammerBlobIcon size={50} animate mode="lecturer" />
                   </div>
                   <div>
-                    <h1 className="qr-title qr-title-large">Training Complete!</h1>
+                    <h1 className="qr-title qr-title-large">
+                      Training Complete!
+                    </h1>
                     <p className="qr-subtitle">Professor Scammerblob</p>
                   </div>
                 </div>
-                <button onClick={startGame} className="qr-button qr-button-icon">
+                <button
+                  onClick={startGame}
+                  className="qr-button qr-button-icon"
+                >
                   <RotateCcw size={16} />
                 </button>
               </div>
@@ -984,7 +1123,9 @@ const QRScamGame: React.FC = () => {
                 <div className="qr-score-container">
                   <Award className="qr-score-icon" size={64} />
                   <div className="qr-score-percentage">{percentage}%</div>
-                  <p className="qr-score-text">You got {score} out of {scenarios.length} correct</p>
+                  <p className="qr-score-text">
+                    You got {score} out of {scenarios.length} correct
+                  </p>
                 </div>
 
                 <div className="qr-info-box">
@@ -992,34 +1133,50 @@ const QRScamGame: React.FC = () => {
                     <GraduationCap className="qr-icon-amber" size={20} />
                     <h2 className="qr-info-title">Key Takeaways:</h2>
                   </div>
-                  
+
                   <div className="qr-info-items">
                     <div className="qr-info-item">
                       <Shield className="qr-icon-blue" size={16} />
-                      <span><strong>Check for official branding</strong> - Legitimate QR codes have clear logos</span>
+                      <span>
+                        <strong>Check for official branding</strong> -
+                        Legitimate QR codes have clear logos
+                      </span>
                     </div>
                     <div className="qr-info-item">
                       <Shield className="qr-icon-blue" size={16} />
-                      <span><strong>Beware prizes/vouchers</strong> - Too good to be true offers are bait</span>
+                      <span>
+                        <strong>Beware prizes/vouchers</strong> - Too good to be
+                        true offers are bait
+                      </span>
                     </div>
                     <div className="qr-info-item">
                       <Shield className="qr-icon-blue" size={16} />
-                      <span><strong>Watch for layered stickers</strong> - Stickers placed over originals are a red flag</span>
+                      <span>
+                        <strong>Watch for layered stickers</strong> - Stickers
+                        placed over originals are a red flag
+                      </span>
                     </div>
                     <div className="qr-info-item">
                       <Shield className="qr-icon-blue" size={16} />
-                      <span><strong>Preview URLs</strong> - Check the URL before opening</span>
+                      <span>
+                        <strong>Preview URLs</strong> - Check the URL before
+                        opening
+                      </span>
                     </div>
                     <div className="qr-info-item">
                       <Shield className="qr-icon-blue" size={16} />
-                      <span><strong>Trust your instincts</strong> - If it feels off, don't scan</span>
+                      <span>
+                        <strong>Trust your instincts</strong> - If it feels off,
+                        don't scan
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 <div className="qr-alert-box">
                   <p className="qr-alert-text">
-                    You're now equipped to spot QR scams that fool most people. Stay sharp!
+                    You're now equipped to spot QR scams that fool most people.
+                    Stay sharp!
                   </p>
                 </div>
 
@@ -1031,10 +1188,10 @@ const QRScamGame: React.FC = () => {
           </div>
         </motion.div>
       </>
-    );
+    )
   }
 
-  return null;
-};
+  return null
+}
 
-export default QRScamGame;
+export default QRScamGame
