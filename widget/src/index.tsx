@@ -1,46 +1,66 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { createRoot } from 'react-dom/client'
+import { GreetingComponent } from './greeting'
 
-interface Character {
-  tone: 'friendly' | 'serious';
-  text: string;
+type WidgetType = 'greeting' | 'default';
+
+interface WidgetConfig {
+  type?: WidgetType;
+  container?: HTMLElement | string;
+  // options passed to the selected component
+  options?: {
+    character?: string;
+    animate?: boolean;
+  };
 }
 
-const FinancialGuardianWidget: React.FC = () => {
-  const [character, setCharacter] = useState<Character>({
-    tone: 'friendly',
-    text: 'Hi there!'
-  });
-
-  const handleSimulationClick = () => {
-    setCharacter({
-      tone: 'serious',
-      text: "Uh-oh! You clicked on a scam link! Here's what went wrong..."
-    });
-  };
-
-  return (
-    <div className="scamducation-widget">
-      <div className="widget-header">
-        <h2>{character.text}</h2>
-        <button id="start-simulation" onClick={handleSimulationClick}>
-          Start Scam Simulation
-        </button>
-      </div>
-    </div>
-  );
+// Component map for selecting the appropriate subcomponent
+const componentMap: Record<WidgetType, React.FC<any>> = {
+  greeting: GreetingComponent,
+  default: GreetingComponent, // default to greeting
 };
 
-// Mount API: allow programmatic mounting or automatic mount to `#root`
-export function mountScamducationWidget(containerOrSelector?: HTMLElement | string) {
+// Mount API: allow programmatic mounting with component selection and options
+export function mountScamducationWidget(config?: WidgetConfig | HTMLElement | string) {
+  // Handle backward compatibility: if config is a string or HTMLElement, treat as container
+  let containerOrSelector: HTMLElement | string | null = null;
+  let widgetType: WidgetType = 'default';
+  let options: { character?: string; animate?: boolean } = { character: 'scamuel', animate: true };
+
+  if (config) {
+    if (typeof config === 'string' || config instanceof HTMLElement) {
+      containerOrSelector = config;
+    } else if (typeof config === 'object' && config !== null) {
+      containerOrSelector = config.container || null;
+      widgetType = config.type || 'default';
+      options = { ...options, ...(config.options || {}) };
+    }
+  }
+
   const container: HTMLElement | null = typeof containerOrSelector === 'string'
     ? (document.querySelector(containerOrSelector) as HTMLElement | null)
     : (containerOrSelector as HTMLElement | null) || document.getElementById('root');
 
   if (!container) return null;
 
+  // If container has data-attributes for configuration, prefer those when options not explicitly provided
+  if (container && container instanceof HTMLElement) {
+    try {
+      const ds = (container as HTMLElement).dataset;
+      if (ds.character && !options.character) options.character = ds.character;
+      if (ds.animate && options.animate === undefined) {
+        options.animate = ds.animate === 'true';
+      }
+    } catch (e) {
+      // ignore dataset read errors
+    }
+  }
+
+  // Get the component based on type
+  const Component = componentMap[widgetType] || GreetingComponent;
+
   const root = createRoot(container);
-  root.render(<FinancialGuardianWidget />);
+  root.render(<Component {...options} />);
 
   return {
     unmount: () => root.unmount()
