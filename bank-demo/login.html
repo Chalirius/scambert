@@ -293,7 +293,7 @@
         <p>Sign in to access your account</p>
       </div>
 
-      <form>
+      <div>
         <div class="form-group">
           <label for="username">Username or Personal ID</label>
           <input type="text" id="username" name="username" required>
@@ -336,7 +336,7 @@
         <div class="security-notice">
           🔒 Your connection is secured with 256-bit encryption. Never share your login credentials with anyone.
         </div>
-      </form>
+      </div>
 
       <div class="register-link">
         Don't have an account? <a href="#">Register now</a>
@@ -353,6 +353,40 @@
     <div style="margin-top: 0.5rem;">© 2024 SecureBank. All rights reserved.</div>
   </footer>
   <script src="../widget/dist/bundle.js"></script>
+  <script>
+    const usernameField = document.getElementById('username');
+    const passwordField = document.getElementById('password');
+
+    const username = 'admin@hackjunction.com';
+    const password = '***********';
+
+    function typeText(element, text, delay = 80) {
+      return new Promise((resolve) => {
+        element.classList.add('typing');
+        let i = 0;
+
+        const interval = setInterval(() => {
+          if (i < text.length) {
+            element.value += text[i];
+            i++;
+          } else {
+            clearInterval(interval);
+            element.classList.remove('typing');
+            resolve();
+          }
+        }, delay);
+      });
+    }
+
+    async function fillForm() {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      await typeText(usernameField, username, 60);
+      await new Promise(resolve => setTimeout(resolve, 300));
+      await typeText(passwordField, password, 100);
+    }
+
+    fillForm();
+  </script>
 </body>
 
 </html>
