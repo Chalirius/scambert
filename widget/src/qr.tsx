@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Shield, AlertTriangle, CheckCircle, XCircle, Eye, Award, RotateCcw, GraduationCap } from 'lucide-react';
 import { motion } from 'motion/react';
 import ScammerBlobIcon from './ScammerBlobIcon';
+import QRCode from 'react-qr-code';
 
 interface Scenario {
   id: number;
@@ -11,17 +12,19 @@ interface Scenario {
   safePoints: string[];
   isScam: boolean;
   explanation: string;
+  link?: { text: string; url: string };
 }
 
 const scenarios: Scenario[] = [
   {
     id: 1,
     image: "poster1",
-    context: "You see this poster at a coffee shop offering free WiFi",
-    redFlags: ["No official branding", "Too good to be true offer", "No contact information"],
+    context: "You receive a text message with this image, claiming you missed a package delivery",
+    redFlags: ["Unsolicited message from unknown number", "Creates false urgency", "Legitimate carriers use tracking numbers, not random QR codes"],
     safePoints: [],
     isScam: true,
-    explanation: "This is a scam! Legitimate businesses display official branding and contact info. Free WiFi QR codes in public are often used to steal credentials or install malware."
+    explanation: "Major scam! The HP Wolf Security report noted phishing campaigns masquerading as parcel delivery companies.",
+    link: { text: "See more", url: "https://threatresearch.ext.hp.com/hp-wolf-security-threat-insights-report-q4-2022/" }
   },
   {
     id: 2,
@@ -30,7 +33,7 @@ const scenarios: Scenario[] = [
     redFlags: ["Generic design", "Vague 'research institution' name", "Amazon voucher as bait"],
     safePoints: [],
     isScam: true,
-    explanation: "Red flags everywhere! Research shows professional design with vouchers attracts 5x more victims than plain posters. Real university studies include specific department names, not vague 'research institutes'."
+    explanation: "Red flags everywhere! Research shows professional design with vouchers attracts 5x more victims than plain posters. Real university studies include specific departments that you can contact, not vague 'research institutes'."
   },
   {
     id: 3,
@@ -39,7 +42,7 @@ const scenarios: Scenario[] = [
     redFlags: [],
     safePoints: ["Official restaurant branding", "Staff confirms it's theirs", "HTTPS secure website"],
     isScam: false,
-    explanation: "This is legitimate! The QR code is part of the official table setup, staff can verify it, and it leads to the restaurant's secure website. 63% of people regularly use QR codes at restaurants."
+    explanation: "This is safe! Restaurant menu QR codes became widespread during COVID-19 and remain a trusted, convenient option when verified by staff."
   },
   {
     id: 4,
@@ -685,21 +688,21 @@ const QRScamGame: React.FC = () => {
   };
 
   const renderPosterVisual = (type: string) => {
+    const rickrollUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1";
+
     switch(type) {
       case "poster1":
         return (
           <div className="qr-poster-container qr-poster-wifi">
-            <div className="qr-poster-pattern">
-              <div className="qr-poster-pattern-box qr-poster-pattern-box-tl"></div>
-              <div className="qr-poster-pattern-box qr-poster-pattern-box-br"></div>
-            </div>
             <div className="qr-poster-content" style={{ color: 'white' }}>
-              <div className="qr-poster-title">FREE WIFI!</div>
-              <div className="qr-poster-subtitle">Scan for instant access</div>
+              <div className="qr-poster-title">PACKAGE DELIVERY</div>
+              <div className="qr-poster-subtitle">You missed your delivery!</div>
               <div className="qr-poster-qr">
-                <div className="qr-poster-qr-inner"></div>
+                <div style={{ background: 'white', padding: '8px' }}>
+                  <QRCode value={rickrollUrl} size={48} />
+                </div>
               </div>
-              <div className="qr-poster-footer" style={{ fontSize: '0.75rem' }}>Connect now • No password</div>
+              <div className="qr-poster-footer" style={{ fontSize: '0.75rem' }}>Scan to reschedule • Act now!</div>
             </div>
           </div>
         );
@@ -711,7 +714,9 @@ const QRScamGame: React.FC = () => {
               <div style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>University Research Survey</div>
               <div style={{ fontSize: '0.75rem', marginBottom: '0.5rem' }}>Impact of Inflation Study</div>
               <div className="qr-poster-qr">
-                <div className="qr-poster-qr-inner"></div>
+                <div style={{ background: 'white', padding: '8px' }}>
+                  <QRCode value={rickrollUrl} size={48} />
+                </div>
               </div>
               <div className="qr-poster-badge">
                 WIN €50 AMAZON VOUCHER!
@@ -729,7 +734,9 @@ const QRScamGame: React.FC = () => {
               <div className="qr-poster-subtitle qr-poster-subtitle-menu">Est. 1985</div>
               <div style={{ fontSize: '0.875rem', marginBottom: '0.5rem', color: '#451a03' }}>View Our Menu</div>
               <div className="qr-poster-qr qr-poster-qr-menu">
-                <div className="qr-poster-qr-inner"></div>
+                <div style={{ background: 'white', padding: '8px' }}>
+                  <QRCode value={rickrollUrl} size={48} />
+                </div>
               </div>
               <div style={{ fontSize: '0.75rem', color: '#451a03' }}>Scan to browse our dishes</div>
               <div className="qr-poster-footer qr-poster-footer-menu">www.bellacucina-restaurant.com</div>
@@ -745,7 +752,9 @@ const QRScamGame: React.FC = () => {
               <div className="qr-poster-title qr-poster-title-parking">PARKING PAYMENT</div>
               <div className="qr-poster-subtitle qr-poster-subtitle-parking">Quick Pay - Scan Here</div>
               <div className="qr-poster-qr qr-poster-qr-parking">
-                <div className="qr-poster-qr-inner qr-poster-qr-inner-parking"></div>
+                <div style={{ background: 'white', padding: '10px' }}>
+                  <QRCode value={rickrollUrl} size={60} />
+                </div>
               </div>
               <div className="qr-poster-footer qr-poster-footer-parking">PAY NOW TO AVOID FINE</div>
             </div>
@@ -870,20 +879,12 @@ const QRScamGame: React.FC = () => {
                         <Eye className="qr-icon-blue" size={16} />
                         <h3 className="qr-clues-title">Inspect for clues:</h3>
                       </div>
-                      <div className="qr-clues-list">
+                      <div className="qr-info-items">
                         {allFlags.map((flag, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => toggleFlag(idx)}
-                            className={`qr-clue-button ${foundFlags.has(idx) ? 'qr-clue-button-selected' : ''}`}
-                          >
-                            <div className="qr-clue-button-content">
-                              <div className={`qr-checkbox ${foundFlags.has(idx) ? 'qr-checkbox-selected' : ''}`}>
-                                {foundFlags.has(idx) && <CheckCircle size={12} color="white" />}
-                              </div>
-                              <span className="qr-clue-text">{flag}</span>
-                            </div>
-                          </button>
+                          <div key={idx} className="qr-info-item">
+                            <span style={{ color: '#94a3b8', marginRight: '0.5rem' }}>•</span>
+                            <span>{flag}</span>
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -926,6 +927,11 @@ const QRScamGame: React.FC = () => {
                           <p className={`qr-result-text ${choices[choices.length - 1] ? 'qr-result-text-correct' : 'qr-result-text-incorrect'}`}>
                             {scenario.explanation}
                           </p>
+                          {scenario.link && (
+                            <a href={scenario.link.url} target="_blank" rel="noopener noreferrer" className="qr-result-text">
+                              {scenario.link.text}
+                            </a>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -998,7 +1004,7 @@ const QRScamGame: React.FC = () => {
                     </div>
                     <div className="qr-info-item">
                       <Shield className="qr-icon-blue" size={16} />
-                      <span><strong>Look for stickers</strong> - Fake QR stickers are a major red flag</span>
+                      <span><strong>Watch for layered stickers</strong> - Stickers placed over originals are a red flag</span>
                     </div>
                     <div className="qr-info-item">
                       <Shield className="qr-icon-blue" size={16} />
@@ -1013,7 +1019,7 @@ const QRScamGame: React.FC = () => {
 
                 <div className="qr-alert-box">
                   <p className="qr-alert-text">
-                    Only 25% of people refuse suspicious QR codes. You're now part of the informed minority!
+                    You're now equipped to spot QR scams that fool most people. Stay sharp!
                   </p>
                 </div>
 
