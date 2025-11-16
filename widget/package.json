@@ -1,6 +1,6 @@
 {
-  "name": "scamducation-widget",
-  "version": "2.0.0",
+  "name": "scambert-widget",
+  "version": "5.0.0",
   "description": "",
   "type": "module",
   "main": "index.js",
@@ -27,6 +27,7 @@
     "motion": "^12.23.24",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-qr-code": "^2.0.18"
+    "react-qr-code": "^2.0.18",
+    "rollup-plugin-postcss": "^4.0.2"
   }
 }
