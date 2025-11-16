@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "scamducation-widget": "^1.0.0"
+    "scambert-widget": "^5.0.0",
   }
 }

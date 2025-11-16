@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "lib": ["es2017", "dom"],
     "target": "ES6",
     "module": "ESNext",
     "jsx": "react-jsx",
