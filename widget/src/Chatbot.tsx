@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { BossScambertIcon } from "./chatbot-components/BossScambertIcon"
-import { BossBattle } from "./chatbot-components/BossBattle"
+import BossBattle from "./chatbot-components/BossBattle"
 import {
   Send,
   RotateCcw,
@@ -24,7 +24,7 @@ import {
   scamTypes,
 } from "./chatbot-components/ScamData"
 import ScambertIcon from "./ScambertIcon"
-import "./chatbot-components/chatbot.css"
+// import "./chatbot-components/chatbot.css"
 
 interface Message {
   id: string
@@ -263,7 +263,7 @@ interface AchievementProgress {
   readRickRollText: boolean
 }
 
-export default function App() {
+export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false)
   const [mode, setMode] = useState<AppMode>("chatting")
   const [messages, setMessages] = useState<Message[]>([

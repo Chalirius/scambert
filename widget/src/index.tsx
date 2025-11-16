@@ -3,8 +3,9 @@ import { createRoot } from "react-dom/client"
 import { GreetingComponent } from "./Greeting"
 import QRScamGame from "./Qr"
 import { ScamsInYourArea } from "./ScamsInYourArea"
+import ChatBot from "./Chatbot"
 
-type WidgetType = "greeting" | "default" | "qr" | "scams-in-your-area"
+type WidgetType = "greeting" | "default" | "qr" | "scams-in-your-area" | "chatbot"
 
 interface WidgetOptions {
   character?: string
@@ -18,6 +19,7 @@ const componentMap: Record<WidgetType, React.FC<any>> = {
   qr: QRScamGame,
   "scams-in-your-area": ScamsInYourArea,
   default: GreetingComponent,
+  chatbot: ChatBot
 }
 
 // Mount API: allow programmatic mounting with component selection and options

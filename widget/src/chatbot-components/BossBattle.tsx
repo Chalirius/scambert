@@ -18,7 +18,7 @@ interface BossBattleProps {
   bossName: string
 }
 
-export function BossBattle({
+export default function BossBattle({
   onClose,
   onVictory,
   apiEndpoint,
