@@ -41,7 +41,7 @@ export function mountScamducationWidget(config: HTMLElement | null) {
 ;(globalThis as any).mountScamducationWidget = mountScamducationWidget
 
 // Auto-mount if a `#root` container exists on page
-if (document.getElementById("root")) {
-  const element = document.getElementById("root")
+if (document.getElementById("sc-widget")) {
+  const element = document.getElementById("sc-widget")
   mountScamducationWidget(element)
 }
