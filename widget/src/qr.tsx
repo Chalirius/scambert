@@ -937,7 +937,9 @@ const QRScamGame: React.FC = () => {
                 <div className="qr-card-header-flex">
                   <div className="qr-blob-container">
                     <div className="qr-blob-glow qr-blob-glow-blue"></div>
-                    <ScambertIcon size={40} animate />
+                      <div className="sb-amber-glow-wrap">
+                        <ScambertIcon size={40} animate />
+                      </div>
                   </div>
                   <div>
                     <h2 className="qr-title">

@@ -1,4 +1,5 @@
 import React from "react"
+import "./globals.css"
 import { createRoot } from "react-dom/client"
 import { GreetingComponent } from "./Greeting"
 import QRScamGame from "./Qr"

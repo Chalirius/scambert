@@ -24,7 +24,7 @@ import {
   scamTypes,
 } from "./chatbot-components/ScamData"
 import ScambertIcon from "./ScambertIcon"
-// import "./chatbot-components/chatbot.css"
+import "./chatbot-components/chatbot.css"
 
 interface Message {
   id: string
@@ -238,15 +238,15 @@ function renderMessageWithLinks(text: string) {
   return parts.map((part, index) => {
     if (part.match(urlRegex)) {
       return (
-        <a
-          key={index}
-          href={part}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline hover:text-orange-400 transition-colors"
-        >
-          {part}
-        </a>
+      <a
+        key={index}
+        href={part}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="sb-link"
+      >
+        {part}
+      </a>
       )
     }
     return part
@@ -285,6 +285,7 @@ export default function ChatBot() {
     return localStorage.getItem("Scambert_welcome_seen") === "true"
   })
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const bossTimeoutRef = useRef<number | null>(null)
 
   // Boss Battle state
   const [showBossIcon, setShowBossIcon] = useState(false) // Boss icon spawned
@@ -776,7 +777,11 @@ export default function ChatBot() {
     const names = ["SCAMMY", "SCAMBERT"]
     const randomName = names[Math.floor(Math.random() * names.length)]
     setBossName(randomName)
-    setShowBossIcon(true) // Spawn the boss icon (doesn't open battle yet)
+    // Avoid spawning multiple boss icons if one is already visible
+    setShowBossIcon((prev) => {
+      if (prev) return prev
+      return true
+    })
   }
 
   const handleBossIconClick = () => {
@@ -787,11 +792,39 @@ export default function ChatBot() {
     setHasDefeatedBoss(true)
     localStorage.setItem("Scambert_boss_defeated", "true")
     setShowChampionTitle(true)
-    setTimeout(() => {
+    // Clearable timeout so we don't leak state updates after unmount
+    const tid = window.setTimeout(() => {
       setShowBossBattle(false)
       setShowBossIcon(false) // Remove boss icon after defeat
     }, 3000)
+    bossTimeoutRef.current = tid
   }
+
+  // Defensive: if multiple floating icons exist in the DOM (e.g., host mounted widget twice), hide extras
+  useEffect(() => {
+    try {
+      const els = document.querySelectorAll('.scambert-float')
+      if (els.length > 1) {
+        els.forEach((el, i) => {
+          if (i > 0) {
+            ;(el as HTMLElement).style.display = 'none'
+          }
+        })
+      }
+    } catch (err) {
+      // ignore
+    }
+  }, [])
+
+  // clear any timeouts when unmounting to avoid setState on unmounted component
+  useEffect(() => {
+    return () => {
+      if (bossTimeoutRef.current) {
+        clearTimeout(bossTimeoutRef.current)
+        bossTimeoutRef.current = null
+      }
+    }
+  }, [])
 
   const handleCloseBoss = () => {
     setShowBossBattle(false) // Just close the battle window, keep icon visible
@@ -808,7 +841,7 @@ export default function ChatBot() {
     <>
       {/* Floating Scambert Icon */}
       <motion.div
-        className="fixed bottom-8 right-8 z-50 cursor-pointer"
+        className="scambert-float"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => {
@@ -830,7 +863,7 @@ export default function ChatBot() {
         <div className="relative">
           {/* Chat bubble */}
           <motion.div
-            className="absolute top-6 -left-28 bg-slate-800 border border-slate-600 rounded-2xl rounded-br-sm px-3 py-1.5 shadow-lg"
+            className="scambert-bubble"
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{
@@ -838,12 +871,10 @@ export default function ChatBot() {
               delay: 0.5,
             }}
           >
-            <p className="text-slate-200 text-xs whitespace-nowrap">
-              Hey you! Psst!...
-            </p>
+            <p className="sb-chat-bubble-text">Hey you! Psst!...</p>
           </motion.div>
 
-          <div className="absolute inset-0 bg-slate-900/80 rounded-full blur-xl"></div>
+          <div></div>
           <ScambertIcon
             size={80}
             animate
@@ -861,7 +892,7 @@ export default function ChatBot() {
             initial={{ opacity: 0, scale: 0, x: 100 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
             exit={{ opacity: 0, scale: 0, x: 100 }}
-            className="fixed bottom-8 right-32 z-50 cursor-pointer"
+            className="sb-boss-icon-container"
             whileHover={{ scale: 1.15 }}
             whileTap={{ scale: 0.9 }}
             transition={{
@@ -873,7 +904,7 @@ export default function ChatBot() {
             <div className="relative">
               {/* Warning pulse */}
               <motion.div
-                className="absolute inset-0 bg-red-600/50 rounded-full blur-2xl"
+                className="sb-boss-pulse"
                 animate={{
                   scale: [1, 1.3, 1],
                   opacity: [0.5, 0.8, 0.5],
@@ -895,12 +926,12 @@ export default function ChatBot() {
 
               {/* Click indicator */}
               <motion.div
-                className="absolute -top-12 left-1/2 -translate-x-1/2 bg-red-900 border border-red-600 rounded-lg px-3 py-1 shadow-lg whitespace-nowrap"
+                className="sb-boss-click-indicator"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
               >
-                <p className="text-red-200 text-xs font-bold">
+                <p className="sb-boss-click-indicator-text">
                   ⚠️ CLICK TO BATTLE! ⚠️
                 </p>
               </motion.div>
@@ -913,7 +944,7 @@ export default function ChatBot() {
       <AnimatePresence>
         {isOpen && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+            className="sb-dialog-backdrop"
             onClick={() => setIsOpen(false)}
           >
             <motion.div
@@ -921,104 +952,87 @@ export default function ChatBot() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-2xl bg-slate-950 border border-slate-700 shadow-2xl rounded-lg overflow-hidden flex flex-col max-h-[90vh]"
+              className="sb-dialog-container"
             >
               {/* Header */}
-              <div className="border-b border-orange-900/30 p-6 bg-gradient-to-r from-slate-900/50 via-blue-950/30 to-orange-950/20">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
+              <div className="sb-header">
+                <div className="sb-header-content">
+                  <div className="sb-header-left">
                     {mode === "caught" ? (
                       // Simple icon for ending screen
-                      <div className="relative">
-                        <div
-                          className={`absolute inset-0 rounded-full blur-lg ${
-                            checkForMegaAchievement(achievementProgress)
-                              ? "bg-yellow-500/30"
-                              : "bg-amber-500/20"
-                          }`}
-                        ></div>
-                        <div className="relative w-14 h-14 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center border-2 border-amber-500/50">
+                      <div className="sb-icon-wrapper">
+                        <div className="sb-avatar-simple">
                           {checkForMegaAchievement(achievementProgress) ? (
-                            <Crown className="h-7 w-7 text-yellow-200" />
+                            <Crown size={28} className="sb-icon sb-icon--yellow" />
                           ) : (
-                            <GraduationCap className="h-7 w-7 text-amber-100" />
+                            <GraduationCap size={28} className="sb-icon sb-icon--amber" />
                           )}
                         </div>
                       </div>
                     ) : (
                       // Full Scambert icon for other modes
                       <div className="relative">
-                        <div
-                          className={`absolute inset-0 rounded-full blur-lg ${
-                            checkForMegaAchievement(achievementProgress)
-                              ? "bg-yellow-500/30"
-                              : mode === "learning"
-                              ? "bg-amber-500/20"
-                              : "bg-blue-500/20"
-                          }`}
-                        ></div>
-                        <ScambertIcon
-                          size={60}
-                          animate
-                          mode={
-                            checkForMegaAchievement(achievementProgress)
-                              ? "mega"
-                              : mode === "learning"
-                              ? "lecturer"
-                              : "scammer"
-                          }
-                        />
+                        <div className="sb-amber-glow-wrap">
+                          <ScambertIcon
+                            size={60}
+                            animate
+                            mode={
+                              checkForMegaAchievement(achievementProgress)
+                                ? "mega"
+                                : mode === "learning"
+                                ? "lecturer"
+                                : "scammer"
+                            }
+                          />
+                        </div>
                       </div>
                     )}
-                    <div>
-                      <h1 className="text-slate-100">
+                    <div className="sb-header-text">
+                      <h1 className="sb-heading">
                         {checkForMegaAchievement(achievementProgress)
                           ? "👑 MEGA CHAMPION Scambert 👑"
                           : mode === "learning" || mode === "caught"
                           ? "Professor Scambert"
                           : "Scambert"}
                       </h1>
-                      <p className="text-slate-400 text-sm">
+                      <p className="sb-muted">
                         {mode === "learning" || mode === "caught"
                           ? "Educational Mode"
                           : "Scam Scenario Simulator"}
                       </p>
                     </div>
                   </div>
-                  <button
-                    onClick={handleResetClick}
-                    className="w-10 h-10 rounded-md border border-orange-700/50 hover:bg-orange-950/30 hover:border-orange-600 flex items-center justify-center transition-colors"
-                  >
-                    <RotateCcw className="h-4 w-4 text-slate-300" />
+                  <button onClick={handleResetClick} className="sb-reset-button">
+                    <RotateCcw className="sb-reset-icon" />
                   </button>
                 </div>
-                <p className="text-slate-500 text-xs mt-3 bg-slate-800/50 p-2 rounded border border-blue-900/30">
+                <p className="sb-disclaimer">
                   ⚠️ Educational purposes only - Learn to identify common scam
                   tactics
                 </p>
               </div>
 
               {/* Chat Area */}
-              <div className="flex-1 overflow-y-auto p-6 bg-gradient-to-b from-slate-950 to-slate-900">
+              <div className="sb-chat-area">
                 {mode === "learning" && currentScamType ? (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="space-y-6"
+                    className="learning-panel"
                   >
-                    <div className="bg-gradient-to-br from-amber-950/50 to-orange-950/30 border border-amber-900/50 rounded-lg p-6">
-                      <div className="flex items-center gap-3 mb-4">
-                        <GraduationCap className="h-6 w-6 text-amber-400" />
-                        <h2 className="text-amber-100">Scam Analysis</h2>
+                    <div className="sb-learning-content">
+                      <div className="sb-learning-header">
+                        <GraduationCap className="sb-learning-icon" />
+                        <h2 className="sb-learning-title">Scam Analysis</h2>
                       </div>
 
-                      <div className="space-y-4 text-slate-200">
+                      <div className="sb-learning-body">
                         <div>
-                          <h3 className="text-amber-300 mb-2">
+                          <h3 className="sb-learning-subheader">
                             Scam Type: {currentScamType.name}
                           </h3>
                           <div className="relative">
-                            <p className="text-sm leading-relaxed">
+                            <p className="sb-learning-description">
                               {currentScamType.name ===
                               "Rick Roll (Easter Egg)" ? (
                                 <>
@@ -1031,7 +1045,7 @@ export default function ChatBot() {
                                           <span className="relative inline-block">
                                             <button
                                               onClick={handleReadRickRoll}
-                                              className="text-blue-400 hover:text-blue-300 underline cursor-pointer"
+                                              className="sb-link-inline"
                                             >
                                               click here
                                             </button>
@@ -1054,10 +1068,10 @@ export default function ChatBot() {
                                                     y: -20,
                                                   }}
                                                   transition={{ duration: 0.3 }}
-                                                  className="absolute left-0 top-full mt-2 whitespace-nowrap bg-gradient-to-r from-green-950/90 to-emerald-950/90 border border-green-400/50 rounded-md px-3 py-1.5 flex items-center gap-2 z-10"
+                                                  className="sb-achievement-inline"
                                                 >
-                                                  <BookOpen className="h-4 w-4 text-green-400" />
-                                                  <span className="text-green-200 text-xs">
+                                                  <BookOpen className="sb-achievement-inline-icon" />
+                                                  <span className="sb-achievement-inline-text">
                                                     Achievement Unlocked!
                                                   </span>
                                                 </motion.div>
@@ -1075,28 +1089,22 @@ export default function ChatBot() {
                           </div>
                         </div>
 
-                        <div className="bg-slate-900/50 p-4 rounded border border-orange-900/30">
-                          <h4 className="text-orange-300 mb-2">
-                            📊 Statistics
-                          </h4>
-                          <p className="text-sm mb-2">
-                            {currentScamType.statistics}
-                          </p>
-                          <p className="text-sm text-red-400">
-                            {currentScamType.moneyLost}
-                          </p>
+                        <div className="sb-stats-card">
+                          <h4 className="sb-stats-header">📊 Statistics</h4>
+                          <p className="sb-card-text">{currentScamType.statistics}</p>
+                          <p className="sb-card-urgent">{currentScamType.moneyLost}</p>
                         </div>
 
-                        <div className="bg-blue-950/30 p-4 rounded border border-blue-900/50">
-                          <h4 className="text-blue-300 mb-2">📚 Learn More</h4>
+                        <div className="sb-learn-card">
+                          <h4 className="sb-learn-header">📚 Learn More</h4>
                           <a
                             href={currentScamType.resource.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-2 underline"
+                            className="sb-learn-link"
                           >
                             {currentScamType.resource.name}
-                            <ExternalLink className="h-3 w-3" />
+                            <ExternalLink className="sb-learn-icon" />
                           </a>
                         </div>
                       </div>
@@ -1104,7 +1112,7 @@ export default function ChatBot() {
 
                     <button
                       onClick={handleTryAgain}
-                      className="w-full bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white rounded-lg px-4 py-2 transition-all"
+                      className="sb-try-button"
                     >
                       Try Another Scenario
                     </button>
@@ -1113,16 +1121,16 @@ export default function ChatBot() {
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="flex flex-col items-center justify-center h-full space-y-6"
+                    className="sb-ending-container"
                   >
                     {/* Professor and Whiteboard */}
-                    <div className="flex items-end justify-center">
+                    <div className="sb-professor-container">
                       {/* Whiteboard on stand */}
                       <svg
                         width="180"
                         height="140"
                         viewBox="0 0 180 140"
-                        className="flex-shrink-0"
+                        className="sb-flex-shrink-0"
                       >
                         {/* Whiteboard frame */}
                         <rect
@@ -1200,7 +1208,7 @@ export default function ChatBot() {
                       </svg>
 
                       {/* Professor Scambert overlaying the whiteboard */}
-                      <div className="-ml-16">
+                      <div className="sb-professor-overlap">
                         <ScambertIcon
                           size={120}
                           animate
@@ -1214,13 +1222,13 @@ export default function ChatBot() {
                       </div>
                     </div>
 
-                    <div className="text-center space-y-4">
+                    <div className="sb-ending-text">
                       {wasSuccessful ? (
                         <>
-                          <h2 className="text-green-400">
+                          <h2 className="sb-ending-title-success">
                             You defeated the scammer! 🎉
                           </h2>
-                          <p className="text-slate-300 text-sm max-w-md">
+                          <p className="sb-ending-description">
                             Well done! You identified the red flags and avoided
                             falling for the scam. Would you like to learn more
                             about this type of scam?
@@ -1228,10 +1236,10 @@ export default function ChatBot() {
                         </>
                       ) : (
                         <>
-                          <h2 className="text-red-400">
+                          <h2 className="sb-ending-title-failure">
                             You have been caught! 🎣
                           </h2>
-                          <p className="text-slate-300 text-sm max-w-md">
+                          <p className="sb-ending-description">
                             This is a learning experience! Would you like to
                             understand what just happened?
                           </p>
@@ -1244,84 +1252,66 @@ export default function ChatBot() {
                       <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="w-full max-w-md bg-gradient-to-br from-amber-950/50 to-amber-900/30 border border-amber-600/30 rounded-lg p-4"
+                        className="sb-achievements-panel"
                       >
-                        <h3 className="text-amber-400 text-center mb-3 flex items-center justify-center gap-2">
-                          <Trophy className="h-5 w-5" />
+                        <h3 className="sb-achievements-title">
+                          <Trophy size={20} className="sb-icon sb-icon--amber" />
                           New Achievements Unlocked!
                         </h3>
-                        <div className="flex flex-wrap gap-2 justify-center">
+                        <div className="sb-achievements-list">
                           {newAchievements.includes("first") && (
-                            <div className="flex items-center gap-2 bg-blue-950/50 border border-blue-600/30 rounded-md px-3 py-2">
-                              <Star className="h-4 w-4 text-blue-400" />
-                              <span className="text-blue-200 text-sm">
-                                First Steps
-                              </span>
+                            <div className="sb-achievement sb-achievement--first">
+                              <Star size={16} className="sb-icon sb-icon--blue" />
+                              <span className="sb-achievement-label">First Steps</span>
                             </div>
                           )}
                           {newAchievements.includes("third") && (
-                            <div className="flex items-center gap-2 bg-purple-950/50 border border-purple-600/30 rounded-md px-3 py-2">
-                              <Award className="h-4 w-4 text-purple-400" />
-                              <span className="text-purple-200 text-sm">
-                                Getting Good
-                              </span>
+                            <div className="sb-achievement sb-achievement--third">
+                              <Award size={16} className="sb-icon sb-icon--purple" />
+                              <span className="sb-achievement-label">Getting Good</span>
                             </div>
                           )}
                           {newAchievements.includes("rickroll") && (
-                            <div className="flex items-center gap-2 bg-pink-950/50 border border-pink-600/30 rounded-md px-3 py-2">
-                              <Trophy className="h-4 w-4 text-pink-400" />
-                              <span className="text-pink-200 text-sm">
-                                Never Gonna Give You Up
-                              </span>
+                            <div className="sb-achievement sb-achievement--rickroll">
+                              <Trophy size={16} className="sb-icon sb-icon--pink" />
+                              <span className="sb-achievement-label">Never Gonna Give You Up</span>
                             </div>
                           )}
                           {newAchievements.includes("master") && (
-                            <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-950/50 to-amber-950/50 border border-yellow-500/50 rounded-md px-3 py-2">
-                              <Crown className="h-5 w-5 text-yellow-400" />
-                              <span className="text-yellow-200 text-sm">
-                                Scam Master
-                              </span>
+                            <div className="sb-achievement sb-achievement--master">
+                              <Crown size={20} className="sb-icon sb-icon--yellow" />
+                              <span className="sb-achievement-label">Scam Master</span>
                             </div>
                           )}
                           {newAchievements.includes("gullible") && (
-                            <div className="flex items-center gap-2 bg-gradient-to-r from-red-950/50 to-orange-950/50 border border-red-500/50 rounded-md px-3 py-2">
-                              <Frown className="h-5 w-5 text-red-400" />
-                              <span className="text-red-200 text-sm">
-                                Easily Fooled
-                              </span>
+                            <div className="sb-achievement sb-achievement--gullible">
+                              <Frown size={20} className="sb-icon sb-icon--red" />
+                              <span className="sb-achievement-label">Easily Fooled</span>
                             </div>
                           )}
                           {newAchievements.includes("hypergamer") && (
-                            <div className="flex items-center gap-2 bg-gradient-to-r from-cyan-950/50 to-blue-950/50 border border-cyan-400/50 rounded-md px-3 py-2">
-                              <Trophy className="h-5 w-5 text-cyan-400" />
-                              <span className="text-cyan-200 text-sm">
-                                HYPERGAMER - Gotta unlock them all!
-                              </span>
+                            <div className="sb-achievement sb-achievement--hypergamer">
+                              <Trophy size={20} className="sb-icon sb-icon--cyan" />
+                              <span className="sb-achievement-label">HYPERGAMER - Gotta unlock them all!</span>
                             </div>
                           )}
                           {newAchievements.includes("wiseone") && (
-                            <div className="flex items-center gap-2 bg-gradient-to-r from-amber-950/50 to-yellow-950/50 border border-amber-400/50 rounded-md px-3 py-2">
-                              <BookOpen className="h-5 w-5 text-amber-400" />
-                              <span className="text-amber-200 text-sm">
-                                Wise One - Knowledge is Power!
-                              </span>
+                            <div className="sb-achievement sb-achievement--wiseone">
+                              <BookOpen size={20} className="sb-icon sb-icon--amber" />
+                              <span className="sb-achievement-label">Wise One - Knowledge is Power!</span>
                             </div>
                           )}
                           {newAchievements.includes("readrickroll") && (
-                            <div className="flex items-center gap-2 bg-gradient-to-r from-green-950/50 to-emerald-950/50 border border-green-400/50 rounded-md px-3 py-2">
-                              <BookOpen className="h-5 w-5 text-green-400" />
-                              <span className="text-green-200 text-sm">
-                                Learned - masterful at reading text!
-                              </span>
+                            <div className="sb-achievement sb-achievement--readrickroll">
+                              <BookOpen size={20} className="sb-icon sb-icon--green" />
+                              <span className="sb-achievement-label">Learned - masterful at reading text!</span>
                             </div>
                           )}
                           {newAchievements.includes("megaachievement") && (
-                            <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-900/70 via-pink-900/70 to-purple-900/70 border-2 border-yellow-400 rounded-md px-4 py-3 animate-pulse">
-                              <Sparkles className="h-6 w-6 text-yellow-300" />
-                              <span className="text-yellow-100 animate-pulse">
-                                THE COLLECT ALL ACHIEVEMENTS MEGAACHIEVEMENT!
-                              </span>
-                              <Sparkles className="h-6 w-6 text-yellow-300" />
+                            <div className="sb-achievement sb-achievement--mega sb-achievement--pulse">
+                              <Sparkles size={24} className="sb-icon sb-icon--yellow" />
+                              <span className="sb-achievement-label">THE COLLECT ALL ACHIEVEMENTS MEGAACHIEVEMENT!</span>
+                              <Sparkles size={24} className="sb-icon sb-icon--yellow" />
                             </div>
                           )}
                         </div>
@@ -1329,156 +1319,121 @@ export default function ChatBot() {
                     )}
 
                     {/* Overall Progress Display */}
-                    <div className="w-full max-w-md bg-slate-800/50 border border-slate-700/50 rounded-lg p-4">
-                      <h4 className="text-slate-300 text-sm mb-3 text-center">
-                        Your Progress
-                      </h4>
-                      <div className="grid grid-cols-2 gap-3 text-center">
-                        <div className="bg-slate-900/50 rounded-md p-2">
-                          <div className="text-2xl text-blue-400">
+                    <div className="sb-progress-panel">
+                      <h4 className="sb-progress-title">Your Progress</h4>
+                      <div className="sb-progress-grid">
+                        <div className="sb-progress-card">
+                          <div className="sb-progress-number sb-progress-number--blue">
                             {achievementProgress.totalRoutesCompleted}
                           </div>
-                          <div className="text-xs text-slate-400">
-                            Routes Completed
-                          </div>
+                          <div className="sb-progress-label">Routes Completed</div>
                         </div>
-                        <div className="bg-slate-900/50 rounded-md p-2">
-                          <div className="text-2xl text-green-400">
-                            {Math.min(
-                              achievementProgress.avoidedScamTypes.size,
-                              8
-                            )}
-                            /8
+                        <div className="sb-progress-card">
+                          <div className="sb-progress-number sb-progress-number--green">
+                            {Math.min(achievementProgress.avoidedScamTypes.size, 8)}/8
                           </div>
-                          <div className="text-xs text-slate-400">
-                            Scam Types Avoided
-                          </div>
+                          <div className="sb-progress-label">Scam Types Avoided</div>
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-3 text-center mt-2">
-                        <div className="bg-slate-900/50 rounded-md p-2">
-                          <div className="text-2xl text-red-400">
-                            {Math.min(
-                              achievementProgress.fallenForScamTypes.size,
-                              8
-                            )}
-                            /8
+
+                      <div className="sb-progress-grid">
+                        <div className="sb-progress-card">
+                          <div className="sb-progress-number sb-progress-number--red">
+                            {Math.min(achievementProgress.fallenForScamTypes.size, 8)}/8
                           </div>
-                          <div className="text-xs text-slate-400">
-                            Fallen For
-                          </div>
+                          <div className="sb-progress-label">Fallen For</div>
                         </div>
-                        <div className="bg-slate-900/50 rounded-md p-2">
-                          <div className="text-2xl text-purple-400">
+                        <div className="sb-progress-card">
+                          <div className="sb-progress-number sb-progress-number--purple">
                             {Math.min(
-                              achievementProgress.avoidedScamTypes.size +
-                                achievementProgress.fallenForScamTypes.size,
+                              achievementProgress.avoidedScamTypes.size + achievementProgress.fallenForScamTypes.size,
                               16
-                            )}
-                            /16
+                            )}/16
                           </div>
-                          <div className="text-xs text-slate-400">
-                            Total Outcomes
-                          </div>
+                          <div className="sb-progress-label">Total Outcomes</div>
                         </div>
                       </div>
-                      <div className="grid grid-cols-1 gap-3 text-center mt-2">
-                        <div className="bg-slate-900/50 rounded-md p-2">
-                          <div className="text-2xl text-amber-400">
-                            {Math.min(
-                              achievementProgress.learnedScamTypes.size,
-                              9
-                            )}
-                            /9
+
+                      <div className="sb-progress-grid-single">
+                        <div className="sb-progress-card">
+                          <div className="sb-progress-number sb-progress-number--amber">
+                            {Math.min(achievementProgress.learnedScamTypes.size, 9)}/9
                           </div>
-                          <div className="text-xs text-slate-400">
-                            Scam Types Learned
-                          </div>
+                          <div className="sb-progress-label">Scam Types Learned</div>
                         </div>
                       </div>
                       {achievementProgress.totalRoutesCompleted >= 1 && (
-                        <div className="mt-3 flex items-center justify-center gap-2 text-blue-400 text-sm">
-                          <Star className="h-4 w-4" />
+                        <div className="sb-achievement-line sb-achievement-blue sb-small">
+                          <Star size={16} className="sb-achievement-icon sb-achievement-blue" />
                           <span>First Steps Achieved!</span>
                         </div>
                       )}
                       {achievementProgress.totalRoutesCompleted >= 3 && (
-                        <div className="mt-3 flex items-center justify-center gap-2 text-purple-400 text-sm">
-                          <Award className="h-4 w-4" />
+                        <div className="sb-achievement-line sb-achievement-purple sb-small">
+                          <Award size={16} className="sb-achievement-icon sb-achievement-purple" />
                           <span>Getting Good Achieved!</span>
                         </div>
                       )}
                       {achievementProgress.rickRollCompleted && (
-                        <div className="mt-3 flex items-center justify-center gap-2 text-pink-400 text-sm">
-                          <Trophy className="h-4 w-4" />
+                        <div className="sb-achievement-line sb-achievement-pink sb-small">
+                          <Trophy size={16} className="sb-achievement-icon sb-achievement-pink" />
                           <span>Never Gonna Give You Up Achieved!</span>
                         </div>
                       )}
                       {achievementProgress.avoidedScamTypes.size === 8 && (
-                        <div className="mt-3 flex items-center justify-center gap-2 text-yellow-400 text-sm">
-                          <Crown className="h-4 w-4" />
+                        <div className="sb-achievement-line sb-achievement-yellow sb-small">
+                          <Crown size={16} className="sb-achievement-icon sb-achievement-yellow" />
                           <span>Scam Master Achieved!</span>
                         </div>
                       )}
                       {achievementProgress.fallenForScamTypes.size === 8 && (
-                        <div className="mt-3 flex items-center justify-center gap-2 text-red-400 text-sm">
-                          <Frown className="h-4 w-4" />
+                        <div className="sb-achievement-line sb-achievement-red sb-small">
+                          <Frown size={16} className="sb-achievement-icon sb-achievement-red" />
                           <span>Easily Fooled Achieved!</span>
                         </div>
                       )}
-                      {achievementProgress.avoidedScamTypes.size === 8 &&
-                        achievementProgress.fallenForScamTypes.size === 8 && (
-                          <div className="mt-3 flex items-center justify-center gap-2 text-cyan-400 text-sm">
-                            <Trophy className="h-4 w-4" />
+                      {achievementProgress.avoidedScamTypes.size === 8 && achievementProgress.fallenForScamTypes.size === 8 && (
+                          <div className="sb-achievement-line sb-achievement-cyan sb-small">
+                            <Trophy size={16} className="sb-achievement-icon sb-achievement-cyan" />
                             <span>HYPERGAMER Achieved!</span>
                           </div>
                         )}
                       {achievementProgress.learnedScamTypes.size === 9 && (
-                        <div className="mt-3 flex items-center justify-center gap-2 text-amber-400 text-sm">
-                          <BookOpen className="h-4 w-4" />
+                        <div className="sb-achievement-line sb-achievement-amber sb-small">
+                          <BookOpen size={16} className="sb-achievement-icon sb-achievement-amber" />
                           <span>Wise One Achieved!</span>
                         </div>
                       )}
                       {achievementProgress.readRickRollText && (
-                        <div className="mt-3 flex items-center justify-center gap-2 text-green-400 text-sm">
-                          <BookOpen className="h-4 w-4" />
+                        <div className="sb-achievement-line sb-achievement-green sb-small">
+                          <BookOpen size={16} className="sb-achievement-icon sb-achievement-green" />
                           <span>Learned - masterful at reading text!</span>
                         </div>
                       )}
                       {checkForMegaAchievement(achievementProgress) && (
-                        <div className="mt-3 flex items-center justify-center gap-2 text-sm animate-pulse">
-                          <Sparkles className="h-5 w-5 text-yellow-400" />
-                          <span className="bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
-                            THE COLLECT ALL ACHIEVEMENTS MEGAACHIEVEMENT!
-                          </span>
-                          <Sparkles className="h-5 w-5 text-yellow-400" />
+                        <div className="sb-progress-mega">
+                          <Sparkles size={20} className="sb-progress-mega-icon" />
+                          <span className="sb-progress-mega-text">THE COLLECT ALL ACHIEVEMENTS MEGAACHIEVEMENT!</span>
+                          <Sparkles size={20} className="sb-progress-mega-icon" />
                         </div>
                       )}
                       {hasDefeatedBoss && (
-                        <div className="mt-3 flex items-center justify-center gap-2 text-sm">
-                          <Crown className="h-5 w-5 text-yellow-400 animate-pulse" />
-                          <span className="bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 bg-clip-text text-transparent font-bold">
-                            TRUE ASCENDED CHAMPION!
-                          </span>
-                          <Crown className="h-5 w-5 text-yellow-400 animate-pulse" />
+                        <div className="sb-progress-champion">
+                          <Crown size={20} className="sb-progress-champion-icon" />
+                          <span className="sb-progress-champion-text">TRUE ASCENDED CHAMPION!</span>
+                          <Crown size={20} className="sb-progress-champion-icon" />
                         </div>
                       )}
                     </div>
 
-                    <div className="flex flex-col gap-3 w-full max-w-md">
-                      <button
-                        onClick={handleLearn}
-                        className="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 border border-amber-500/50 text-white rounded-lg px-4 py-2 transition-all flex items-center justify-center"
-                      >
-                        <GraduationCap className="h-4 w-4 mr-2" />
+                      <div className="sb-action-buttons">
+                      <button onClick={handleLearn} className="sb-learn-button">
+                        <GraduationCap size={16} className="sb-learn-button-icon" />
                         {wasSuccessful
                           ? "What was this scam about?"
                           : "Oh no! What was this? What do I learn?"}
                       </button>
-                      <button
-                        onClick={handleTryAgain}
-                        className="border border-blue-700/50 bg-blue-950/30 hover:bg-blue-900/50 text-blue-200 rounded-lg px-4 py-2 transition-all"
-                      >
+                      <button onClick={handleTryAgain} className="sb-retry-button">
                         {wasSuccessful
                           ? "Try another scenario!"
                           : "You shall not defeat me again! Let's have another go at it!"}
@@ -1493,31 +1448,27 @@ export default function ChatBot() {
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: 0.3 }}
                           >
-                            <button
-                              onClick={handleUnleashBoss}
-                              className="w-full bg-gradient-to-r from-red-600 via-red-700 to-red-800 hover:from-red-700 hover:via-red-800 hover:to-red-900 border-2 border-red-500 text-white font-bold text-lg py-6 shadow-lg shadow-red-900/50 animate-pulse rounded-lg flex items-center justify-center"
-                            >
-                              <Flame className="h-6 w-6 mr-2 animate-bounce" />
+                            <button onClick={handleUnleashBoss} className="sb-boss-button">
+                              <Flame size={20} className="sb-boss-button-icon" />
                               UNLEASH THE FINAL BOSS
-                              <Flame className="h-6 w-6 ml-2 animate-bounce" />
+                              <Flame size={20} className="sb-boss-button-icon" />
                             </button>
                           </motion.div>
                         )}
                     </div>
                   </motion.div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="sb-messages-container">
                     {messages.map((message, index) => (
                       <div key={message.id}>
                         <div
-                          className={`flex gap-3 ${
-                            message.sender === "user"
-                              ? "flex-row-reverse"
-                              : "flex-row"
+                          className={`sb-message ${
+                            message.sender === "user" ? "sb-message-reverse" : ""
                           }`}
                         >
                           {message.sender === "Scambert" && (
-                            <div className="flex-shrink-0">
+                            <div className="sb-avatar-wrap">
+                              <div className="sb-avatar-glow" />
                               <ScambertIcon
                                 size={40}
                                 mode={
@@ -1528,15 +1479,9 @@ export default function ChatBot() {
                               />
                             </div>
                           )}
-                          <div
-                            className={`rounded-lg p-4 max-w-[80%] ${
-                              message.sender === "user"
-                                ? "bg-gradient-to-br from-blue-600 to-blue-700 text-white border border-blue-500/50"
-                                : "bg-slate-800 text-slate-200 border border-orange-900/30"
-                            }`}
-                          >
+                          <div className={`sb-message-bubble ${message.sender === "user" ? "sb-message-user" : "sb-message-scammer"}`}>
                             <p>{renderMessageWithLinks(message.text)}</p>
-                            <span className="text-xs opacity-60 mt-1 block">
+                            <span className="sb-message-timestamp">
                               {message.timestamp.toLocaleTimeString([], {
                                 hour: "2-digit",
                                 minute: "2-digit",
@@ -1544,9 +1489,7 @@ export default function ChatBot() {
                             </span>
                           </div>
                           {message.sender === "user" && (
-                            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white border border-blue-400/50">
-                              U
-                            </div>
+                            <div className="sb-user-avatar">U</div>
                           )}
                         </div>
 
@@ -1555,29 +1498,9 @@ export default function ChatBot() {
                           index === messages.length - 1 &&
                           showQuickReplies &&
                           mode === "chatting" && (
-                            <motion.div
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              className="flex flex-wrap gap-2 mt-3 ml-14 mr-2"
-                            >
-                              <button
-                                onClick={() =>
-                                  handleQuickReply("YES, let's do this!")
-                                }
-                                className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white border border-orange-500/50 whitespace-normal rounded-lg px-4 py-2 transition-all"
-                              >
-                                YES, let's do this!
-                              </button>
-                              <button
-                                onClick={() =>
-                                  handleQuickReply(
-                                    "NO. I'm not 100% sure you're legitimate."
-                                  )
-                                }
-                                className="border border-blue-700/50 bg-blue-950/30 hover:bg-blue-900/50 text-blue-200 hover:text-blue-100 whitespace-normal rounded-lg px-4 py-2 transition-all"
-                              >
-                                NO. I'm not 100% sure you're legitimate.
-                              </button>
+                            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="sb-quick-replies">
+                              <button onClick={() => handleQuickReply("YES, let's do this!") } className="sb-quick-reply sb-quick-reply-primary">YES, let's do this!</button>
+                              <button onClick={() => handleQuickReply("NO. I'm not 100% sure you're legitimate.") } className="sb-quick-reply sb-quick-reply-secondary">NO. I'm not 100% sure you're legitimate.</button>
                             </motion.div>
                           )}
 
@@ -1589,13 +1512,13 @@ export default function ChatBot() {
                             <motion.div
                               initial={{ opacity: 0, y: 10 }}
                               animate={{ opacity: 1, y: 0 }}
-                              className="mt-3 ml-14"
+                              className="sb-followup-wrap"
                             >
                               <button
                                 onClick={handleClickLink}
-                                className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white border border-red-500/50 rounded-lg px-4 py-2 transition-all flex items-center"
+                                className="sb-followup-button"
                               >
-                                <Link className="h-4 w-4 mr-2" />
+                                <Link size={16} className="sb-followup-icon" />
                                 {currentScamType.linkText}
                               </button>
                             </motion.div>
@@ -1608,15 +1531,13 @@ export default function ChatBot() {
                             <motion.div
                               initial={{ opacity: 0, y: 10 }}
                               animate={{ opacity: 1, y: 0 }}
-                              className="mt-3 ml-14"
+                              className="sb-outcome-wrap"
                             >
                               <button
                                 onClick={handleProceedToOutcome}
-                                className={`${
-                                  wasSuccessful
-                                    ? "bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white border border-green-500/50"
-                                    : "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white border border-red-500/50"
-                                } rounded-lg px-4 py-2 transition-all`}
+                                className={`sb-outcome-btn ${
+                                  wasSuccessful ? "sb-outcome-success" : "sb-outcome-fail"
+                                }`}
                               >
                                 {wasSuccessful
                                   ? currentScamType?.name?.includes("Rick Roll")
@@ -1635,8 +1556,8 @@ export default function ChatBot() {
 
               {/* Input Area */}
               {(mode === "chatting" || mode === "followup") && (
-                <div className="border-t border-orange-900/30 p-4 bg-gradient-to-r from-slate-900/50 to-blue-950/20">
-                  <div className="flex gap-2">
+                <div className="sb-input-area">
+                  <div className="sb-input-row">
                     <input
                       type="text"
                       value={inputValue}
@@ -1645,13 +1566,10 @@ export default function ChatBot() {
                         e.key === "Enter" && handleSendMessage()
                       }
                       placeholder="Type your response..."
-                      className="flex-1 bg-slate-800 border border-blue-900/30 text-slate-100 placeholder:text-slate-500 focus:border-blue-700 rounded-lg px-4 py-2 outline-none"
+                      className="sb-input-field"
                     />
-                    <button
-                      onClick={() => handleSendMessage()}
-                      className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 border border-blue-500/50 rounded-lg px-4 py-2 transition-all flex items-center justify-center"
-                    >
-                      <Send className="h-4 w-4" />
+                    <button onClick={() => handleSendMessage()} className="sb-send-button">
+                      <Send size={16} className="sb-send-icon" />
                     </button>
                   </div>
                 </div>
@@ -1665,7 +1583,7 @@ export default function ChatBot() {
       <AnimatePresence>
         {showWelcomeModal && (
           <div
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+            className="sb-modal-backdrop"
             onClick={() => setShowWelcomeModal(false)}
           >
             <motion.div
@@ -1673,61 +1591,51 @@ export default function ChatBot() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-slate-900 border-2 border-blue-500/30 rounded-lg p-8 max-w-lg w-full mx-4 shadow-2xl"
+              className="sb-modal-content sb-modal-large"
             >
-              <div className="text-center mb-6">
-                <div className="flex justify-center mb-4">
+              <div className="sb-modal-header">
+                <div className="sb-modal-icon-row">
                   <ScambertIcon size={100} animate mode="scammer" />
                 </div>
-                <h2 className="text-blue-400 text-2xl mb-2">
-                  Welcome, traveler!
-                </h2>
+                <h2 className="sb-modal-heading">Welcome, traveler!</h2>
               </div>
 
-              <div className="space-y-4 mb-6">
-                <p className="text-slate-200">
-                  I'm <span className="text-orange-400">Scambert</span>, your
+              <div className="sb-welcome-body">
+                <p className="sb-modal-paragraph">
+                  I'm <span className="sb-accent">Scambert</span>, your
                   shadowy guide through the treacherous world of scams and
                   schemes. Care to test your wits?
                 </p>
 
-                <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
-                  <p className="text-slate-300 text-sm mb-3">
-                    On this journey, you shall:
-                  </p>
-                  <ul className="space-y-2 text-sm text-slate-400">
-                    <li className="flex items-start gap-2">
-                      <span className="text-blue-400 mt-0.5">⚔️</span>
-                      <span>
-                        Navigate through interactive scam scenarios and
-                        minigames
-                      </span>
+                <div className="sb-info-card">
+                  <p className="sb-card-text sb-small">On this journey, you shall:</p>
+                  <ul className="sb-list sb-list-muted">
+                    <li className="sb-list-item">
+                      <span className="sb-list-icon sb-icon--blue">⚔️</span>
+                      <span>Navigate through interactive scam scenarios and minigames</span>
                     </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-orange-400 mt-0.5">🎓</span>
-                      <span>
-                        Learn about financial crime with authentic UK fraud
-                        statistics
-                      </span>
+                    <li className="sb-list-item">
+                      <span className="sb-list-icon sb-icon--amber">🎓</span>
+                      <span>Learn about financial crime with authentic UK fraud statistics</span>
                     </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-yellow-400 mt-0.5">🏆</span>
+                    <li className="sb-list-item">
+                      <span className="sb-list-icon sb-icon--yellow">🏆</span>
                       <span>Unlock achievements and track your progress</span>
                     </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-red-400 mt-0.5">💀</span>
+                    <li className="sb-list-item">
+                      <span className="sb-list-icon sb-icon--red">💀</span>
                       <span>Perhaps even face a fearsome boss battle...</span>
                     </li>
                   </ul>
                 </div>
               </div>
 
-              <div className="flex gap-3">
+              <div className="sb-modal-actions">
                 <button
                   onClick={() => {
                     setShowWelcomeModal(false)
                   }}
-                  className="flex-1 border border-slate-700 hover:bg-slate-800 text-slate-300 rounded-lg px-4 py-3 transition-all"
+                  className="sb-modal-button sb-modal-button--secondary"
                 >
                   Not today
                 </button>
@@ -1738,7 +1646,7 @@ export default function ChatBot() {
                     setShowWelcomeModal(false)
                     setIsOpen(true)
                   }}
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-orange-600 hover:from-blue-700 hover:to-orange-700 text-white rounded-lg px-4 py-3 transition-all shadow-lg"
+                  className="sb-modal-button sb-modal-button--primary"
                 >
                   Let's begin!
                 </button>
@@ -1752,7 +1660,7 @@ export default function ChatBot() {
       <AnimatePresence>
         {showResetConfirm && (
           <div
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+            className="sb-modal-backdrop"
             onClick={() => setShowResetConfirm(false)}
           >
             <motion.div
@@ -1760,31 +1668,29 @@ export default function ChatBot() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-slate-900 border border-red-900/50 rounded-lg p-6 max-w-md w-full mx-4"
+              className="sb-modal-content sb-modal-confirm"
             >
-              <h2 className="text-red-400 text-xl mb-2">Reset All Progress?</h2>
-              <p className="text-slate-300 mb-4">
+              <h2 className="sb-modal-heading sb-heading-error">Reset All Progress?</h2>
+              <p className="sb-modal-paragraph">
                 Are you certain you want to reset all progress? This will
                 permanently delete:
               </p>
-              <ul className="list-disc list-inside text-slate-400 text-sm mb-4 space-y-1">
+              <ul className="sb-list sb-list-muted sb-small">
                 <li>All achievements earned</li>
                 <li>Routes completed counter</li>
                 <li>Scam types avoided/fallen for records</li>
               </ul>
-              <div className="text-red-300 text-sm mb-6">
-                This action cannot be undone!
-              </div>
-              <div className="flex gap-3">
+              <div className="sb-warning-text">This action cannot be undone!</div>
+              <div className="sb-modal-actions">
                 <button
                   onClick={() => setShowResetConfirm(false)}
-                  className="flex-1 border border-slate-700 hover:bg-slate-800 text-slate-300 rounded-lg px-4 py-2 transition-all"
+                  className="sb-modal-button sb-modal-button--secondary"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => performReset(true)}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-2 transition-all"
+                  className="sb-modal-button sb-modal-button--danger"
                 >
                   Yes, Reset Everything
                 </button>
@@ -1798,7 +1704,7 @@ export default function ChatBot() {
       <AnimatePresence>
         {showBossBattle && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+            className="sb-boss-backdrop"
             onClick={handleBossBackdropClick}
           >
             <BossBattle
@@ -1818,15 +1724,15 @@ export default function ChatBot() {
             initial={{ opacity: 0, scale: 0.5, y: 100 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.5, y: -100 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[60]"
+            className="sb-champion-container"
           >
-            <div className="relative">
+            <div className="sb-champion-root">
               {/* Golden glow */}
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-400 blur-3xl opacity-60 animate-pulse" />
+              <div className="sb-champion-glow" />
 
               {/* Main title card */}
               <motion.div
-                className="relative bg-gradient-to-br from-yellow-400 via-amber-500 to-yellow-600 p-8 rounded-2xl border-4 border-yellow-300 shadow-2xl"
+                className="sb-champion-card"
                 animate={{
                   rotate: [0, 2, -2, 2, 0],
                   scale: [1, 1.05, 1],
@@ -1837,7 +1743,7 @@ export default function ChatBot() {
                   ease: "easeInOut",
                 }}
               >
-                <div className="flex flex-col items-center gap-4">
+                <div className="sb-champion-stack">
                   <motion.div
                     animate={{
                       rotate: 360,
@@ -1852,23 +1758,19 @@ export default function ChatBot() {
                       },
                     }}
                   >
-                    <Crown className="h-20 w-20 text-slate-900" />
+                    <Crown size={80} className="sb-champion-crown" />
                   </motion.div>
 
-                  <h1 className="text-5xl font-bold text-slate-900 text-center tracking-wider">
-                    TRUE ASCENDED
-                  </h1>
-                  <h2 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-900 via-slate-900 to-red-900 text-center">
-                    CHAMPION
-                  </h2>
+                  <h1 className="sb-champion-title">TRUE ASCENDED</h1>
+                  <h2 className="sb-champion-subtitle">CHAMPION</h2>
 
-                  <div className="flex gap-4 mt-2">
-                    <Trophy className="h-8 w-8 text-slate-900 animate-bounce" />
-                    <Sparkles className="h-8 w-8 text-slate-900 animate-pulse" />
-                    <Trophy className="h-8 w-8 text-slate-900 animate-bounce" />
+                  <div className="sb-champion-icons">
+                    <Trophy size={32} className="sb-champion-icon sb-animate-bounce" />
+                    <Sparkles size={32} className="sb-champion-icon sb-animate-pulse" />
+                    <Trophy size={32} className="sb-champion-icon sb-animate-bounce" />
                   </div>
 
-                  <p className="text-slate-800 text-center max-w-md mt-2">
+                  <p className="sb-champion-desc">
                     You have defeated the Ultimate Scam Boss and proven your
                     mastery of scam identification!
                   </p>
@@ -1882,13 +1784,13 @@ export default function ChatBot() {
       {/* Champion Badge - Floating indicator if boss defeated */}
       {hasDefeatedBoss && !showBossBattle && !showChampionTitle && (
         <motion.div
-          className="fixed top-8 right-8 z-40"
+          className="sb-champion-badge-container"
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.5 }}
         >
-          <div className="bg-gradient-to-br from-yellow-400 via-amber-500 to-yellow-600 p-3 rounded-full border-2 border-yellow-300 shadow-xl">
-            <Crown className="h-6 w-6 text-slate-900" />
+          <div className="sb-champion-badge">
+            <Crown size={20} className="sb-champion-badge-icon" />
           </div>
         </motion.div>
       )}

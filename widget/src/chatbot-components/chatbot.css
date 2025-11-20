@@ -1,3 +1,297 @@
+/* Floating Scambert icon */
+.scambert-float {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 50;
+  cursor: pointer;
+}
+
+/* Anchor the glow to the floating Scambert icon so it cannot expand to viewport */
+.scambert-float { position: fixed; }
+.scambert-float .scambert-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 6rem; /* constrained to avoid bleeding into modal */
+  height: 6rem; /* constrained to avoid bleeding into modal */
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(6px);
+  opacity: 0.45;
+  z-index: 40; /* keep below modal/backdrop z-index (modal uses ~50-60) */
+  background: radial-gradient(circle at center, rgba(251,191,36,0.9), rgba(251,191,36,0));
+}
+.scambert-float svg { position: relative; z-index: 1; }
+
+/* Small tooltip bubble next to icon */
+.scambert-bubble {
+  position: absolute;
+  top: 1.5rem;
+  left: -7rem;
+  background: #0f1724; /* slate-800 */
+  border: 1px solid rgba(148,163,184,0.15);
+  border-radius: 1rem;
+  border-bottom-right-radius: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+  color: #e6eef8;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  transform-origin: center;
+}
+
+/* Glow behind icon */
+/* .scambert-glow {
+  position: absolute;
+  inset: 0;
+  background: rgba(15,23,36,0.8);
+  border-radius: 9px;
+  filter: blur(10px);
+  z-index: 1;
+} */
+
+/* Boss floating icon container */
+.boss-float {
+  position: fixed;
+  bottom: 2rem;
+  right: 8rem;
+  z-index: 50;
+  cursor: pointer;
+}
+
+/* Boss warning pulse */
+.boss-pulse {
+  position: absolute;
+  inset: 0;
+  background: rgba(220,38,38,0.32); /* red-600/50 */
+  border-radius: 9999px;
+  filter: blur(18px);
+}
+
+/* Boss click indicator */
+.boss-click-indicator {
+  position: absolute;
+  top: -3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #7f1d1d; /* red-900 */
+  border: 1px solid rgba(220,38,38,0.6);
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+  white-space: nowrap;
+  color: #fecaca;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+/* Modal backdrop for chat */
+.chat-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(6px);
+  padding: 1rem;
+}
+
+/* Chat panel */
+.chat-panel {
+  width: 100%;
+  max-width: 64rem;
+  background: #020617; /* slate-950 */
+  border: 1px solid rgba(30,41,59,0.6);
+  box-shadow: 0 30px 60px rgba(2,6,23,0.8);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
+/* Header */
+.chat-panel .chat-header {
+  border-bottom: 1px solid rgba(194,65,12,0.12);
+  padding: 1.5rem;
+  background: linear-gradient(90deg, rgba(15,23,36,0.3), rgba(3,7,18,0.3));
+}
+
+/* Chat area (scrollable) */
+.chat-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  background: linear-gradient(180deg, #020617, #0b1220);
+  color: #e6eef8;
+}
+
+/* Learning panel and other cards */
+.learning-panel {
+  display: block;
+  gap: 1.5rem;
+}
+
+/* Input area */
+.chat-input-area {
+  border-top: 1px solid rgba(194,65,12,0.12);
+  padding: 1rem;
+  background: linear-gradient(90deg, rgba(15,23,36,0.3), rgba(3,7,18,0.12));
+}
+
+.chat-input {
+  flex: 1;
+  background: #0f1724;
+  border: 1px solid rgba(59,130,246,0.12);
+  color: #e6eef8;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  outline: none;
+}
+
+.chat-input::placeholder {
+  color: #6b7280;
+}
+
+/* Send button */
+.chat-send-btn {
+  background: linear-gradient(90deg, #2563eb, #1d4ed8);
+  border: 1px solid rgba(96,165,250,0.12);
+  color: white;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Converted input area styles */
+.sb-input-area {
+  border-top: 1px solid rgba(194,65,12,0.12);
+  padding: 1rem;
+  background: linear-gradient(90deg, rgba(15,23,36,0.3), rgba(3,7,18,0.12));
+}
+.sb-input-row { display: flex; gap: 0.5rem; align-items: center; }
+.sb-input-field {
+  flex: 1;
+  background: #0f1724;
+  border: 1px solid rgba(30,58,138,0.12);
+  color: #e6eef8;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  outline: none;
+}
+.sb-input-field::placeholder { color: #6b7280; }
+.sb-send-button {
+  background: linear-gradient(90deg, #2563eb, #1d4ed8);
+  border: 1px solid rgba(96,165,250,0.12);
+  color: white;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.sb-send-icon { width: 1rem; height: 1rem; }
+
+/* Message / quick reply styles */
+.sb-messages-container { display: flex; flex-direction: column; gap: 0.75rem; }
+.sb-message { display: flex; gap: 0.75rem; align-items: flex-start; }
+.sb-message-reverse { flex-direction: row-reverse; }
+.sb-avatar-wrap { flex: 0 0 auto; position: relative; width: 2.5rem; height: 2.5rem; display:flex; align-items:flex-start; justify-content:center; }
+.sb-avatar-glow { display: none !important; }
+.sb-avatar-wrap svg { position: relative; z-index: 1; margin-top: 2px; }
+.sb-message-bubble { background: linear-gradient(180deg,#0b1220,#071022); padding: 0.5rem 1rem; border-radius: 0.5rem; max-width: 70%; }
+.sb-message-user { background: linear-gradient(90deg,#0b1220,#06203b); }
+.sb-message-scammer { background: #f3f4f6; color: #0b1220; border: 1px solid rgba(15,23,36,0.06); }
+.sb-message-timestamp { display: block; font-size: 0.75rem; opacity: 0.6; margin-top: 0.25rem; }
+.sb-user-avatar { width: 2rem; height: 2rem; border-radius: 9999px; background: #1f2937; color: #fff; display: flex; align-items: center; justify-content: center; }
+
+.sb-quick-replies { display: flex; gap: 0.5rem; margin-left: 0.5rem; }
+.sb-quick-reply { padding: 0.4rem 0.75rem; border-radius: 0.5rem; border: 1px solid rgba(148,163,184,0.06); cursor: pointer; }
+.sb-quick-reply-primary { background: linear-gradient(90deg,#60a5fa,#2563eb); color: white; }
+.sb-quick-reply-secondary { background: transparent; color: #cbd5e1; border-color: rgba(148,163,184,0.12); }
+
+/* Modal and welcome/reset styles */
+.sb-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px);
+}
+.sb-modal-content {
+  background-color: #0b1220;
+  border: 1px solid rgba(52,64,84,0.45);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  max-width: 42rem;
+  width: 100%;
+  margin: 0 0.5rem;
+}
+.sb-modal-large { padding: 2rem; box-shadow: 0 25px 50px rgba(0,0,0,0.45); }
+.sb-modal-confirm { padding: 1.25rem; }
+.sb-modal-header { text-align: center; margin-bottom: 1rem; }
+.sb-modal-icon-row { display: flex; justify-content: center; margin-bottom: 1rem; }
+.sb-modal-heading { color: #60a5fa; font-size: 1.25rem; margin: 0 0 0.5rem 0; }
+.sb-modal-paragraph { color: #e6eef8; }
+.sb-accent { color: #fb923c; }
+.sb-info-card { background: rgba(15,23,36,0.35); border: 1px solid rgba(30,41,59,0.35); border-radius: 0.5rem; padding: 1rem; }
+.sb-card-text { color: #cbd5e1; margin-bottom: 0.5rem; }
+.sb-small { font-size: 0.875rem; }
+.sb-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.sb-list-muted { color: #94a3b8; }
+.sb-list-item { display: flex; gap: 0.5rem; align-items: flex-start; }
+.sb-list-icon { display: inline-flex; margin-top: 0.125rem; }
+
+.sb-modal-actions { display: flex; gap: 0.75rem; }
+.sb-modal-button { flex: 1; padding: 0.65rem 1rem; border-radius: 0.5rem; border: 1px solid rgba(148,163,184,0.06); cursor: pointer; }
+.sb-modal-button--primary { background: linear-gradient(90deg,#2563eb,#f97316); color: #fff; box-shadow: 0 8px 20px rgba(37,99,235,0.15); }
+.sb-modal-button--secondary { background: transparent; color: #cbd5e1; border-color: rgba(148,163,184,0.12); }
+.sb-modal-button--danger { background: #dc2626; color: #fff; border-color: rgba(220,38,38,0.6); }
+.sb-heading-error { color: #fb7185; }
+.sb-warning-text { color: #fb7185; font-size: 0.875rem; margin-top: 0.75rem; margin-bottom: 0.75rem; }
+
+/* Boss backdrop */
+.sb-boss-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px);
+  padding: 1rem;
+}
+
+/* Champion title */
+.sb-champion-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 60;
+}
+.sb-champion-root { position: relative; }
+.sb-champion-glow { position: absolute; inset: 0; background: linear-gradient(90deg,#fbbf24,#f59e0b,#fbbf24); filter: blur(3rem); opacity: 0.6; animation: pulse 3s infinite; }
+.sb-champion-card { position: relative; background: linear-gradient(180deg,#fef3c7,#f59e0b); padding: 2rem; border-radius: 1rem; border: 4px solid #fde68a; box-shadow: 0 25px 50px rgba(0,0,0,0.35); }
+
+@keyframes pulse { 0%{opacity:0.6}50%{opacity:0.9}100%{opacity:0.6} }
+
+/* small utilities used in component text */
+.text-slate-200 { color: #e6eef8; }
+.text-xs { font-size: 0.75rem; }
+.font-bold { font-weight: 700; }
+
+/* Add any additional classes below as you convert more utilities */
 /* Scammerblob Chatbot Styles */
 
 /* Base styles */
@@ -54,6 +348,20 @@
   background-color: rgba(220, 38, 38, 0.5);
   border-radius: 9999px;
   filter: blur(2rem);
+}
+
+/* Limit boss pulse to the boss icon container so it doesn't expand to the page */
+.sb-boss-icon-container .sb-boss-pulse {
+  inset: auto;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 10rem;
+  height: 10rem;
+  pointer-events: none;
+  filter: blur(10px);
+  opacity: 0.5;
+  z-index: 40;
 }
 
 .sb-boss-click-indicator {
@@ -187,6 +495,27 @@
   background-color: rgba(59, 130, 246, 0.2);
 }
 
+/* Header-specific overrides: center and size the header icon glow so it surrounds
+   the Scambert next to the header text (Scam Scenario Simulator) only. This
+   prevents the generic inset-style glow from expanding unexpectedly elsewhere. */
+.sb-header .sb-icon-glow-amber,
+.sb-header .sb-icon-glow-yellow,
+.sb-header .sb-icon-glow-blue {
+  inset: auto;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 8rem;
+  height: 8rem;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(24px);
+  opacity: 0.6;
+  z-index: 0;
+  background: radial-gradient(circle at center, rgba(251,191,36,0.9), rgba(251,191,36,0));
+}
+.sb-header .sb-icon-wrapper svg { position: relative; z-index: 1; }
+
 .sb-avatar-simple {
   position: relative;
   width: 3.5rem;
@@ -253,6 +582,280 @@
   background: linear-gradient(to bottom, #0a0f1e, #0f172a);
 }
 
+/* Message bubbles */
+.sb-message-bubble {
+  border-radius: 0.5rem;
+  padding: 1rem;
+  max-width: 80%;
+}
+.sb-message-user {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: #fff;
+  border: 1px solid rgba(59,130,246,0.18);
+}
+.sb-message-scambert {
+  background: #0f1724;
+  color: #e6eef8;
+  border: 1px solid rgba(249,115,22,0.06);
+}
+
+.sb-user-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #fff;
+  border: 1px solid rgba(96,165,250,0.12);
+}
+
+/* Outcome button */
+.sb-outcome-btn {
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  transition: all 0.15s ease-in-out;
+  font-weight: 600;
+}
+.sb-outcome-success {
+  background: linear-gradient(90deg, #16a34a, #15803d);
+  color: white;
+  border: 1px solid rgba(34,197,94,0.12);
+}
+.sb-outcome-fail {
+  background: linear-gradient(90deg, #dc2626, #b91c1c);
+  color: white;
+  border: 1px solid rgba(239,68,68,0.12);
+}
+
+/* Final Boss Button */
+.sb-final-boss-btn {
+  width: 100%;
+  background: linear-gradient(90deg, #dc2626, #b91c1c);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.125rem;
+  padding: 1.25rem 1rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 20px 40px rgba(139, 0, 0, 0.35);
+  border: 2px solid rgba(185, 28, 28, 0.3);
+}
+
+/* Welcome modal */
+.sb-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(6px);
+  padding: 1rem;
+}
+.sb-modal {
+  width: 100%;
+  max-width: 40rem;
+  background: #0f1724;
+  border: 1px solid rgba(59,130,246,0.06);
+  border-radius: 0.75rem;
+  padding: 2rem;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+}
+
+/* Button styles */
+.sb-btn {
+  flex: 1;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s ease, transform 0.08s ease;
+  cursor: pointer;
+}
+.sb-btn-primary {
+  background: linear-gradient(90deg, #2563eb, #fb923c);
+  color: #fff;
+  border: none;
+  box-shadow: 0 10px 25px rgba(37,99,235,0.12);
+}
+.sb-btn-primary:hover { transform: translateY(-1px); }
+.sb-btn-secondary {
+  background: transparent;
+  color: #cbd5e1;
+  border: 1px solid rgba(71,85,105,0.6);
+}
+.sb-btn-secondary:hover { background: rgba(15,23,36,0.6); }
+/* Reset dialog specific styles */
+.sb-reset-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(6px);
+  padding: 1rem;
+}
+.sb-reset-modal {
+  background: #0f1724;
+  border: 1px solid rgba(185,28,28,0.12);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  max-width: 28rem;
+  width: 100%;
+}
+.sb-reset-heading {
+  color: #f87171;
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+}
+.sb-reset-text { color: #cbd5e1; margin-bottom: 0.75rem; }
+.sb-reset-list { list-style: disc; padding-left: 1.25rem; color: #94a3b8; margin-bottom: 0.75rem; }
+.sb-reset-warning { color: #fca5a5; font-size: 0.875rem; margin-bottom: 0.75rem; }
+.sb-reset-actions { display: flex; gap: 0.75rem; }
+.sb-btn-danger { background: linear-gradient(90deg,#dc2626,#b91c1c); color: #fff; border: none; }
+
+/* Boss Battle backdrop/container */
+.sb-boss-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(6px);
+  padding: 1rem;
+}
+.sb-boss-container {
+  width: 100%;
+  max-width: 48rem;
+  background: transparent; /* BossBattle handles its own visuals */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sb-boss-inner { position: relative; }
+
+/* Champion title / badge styles */
+.sb-champion-stack { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.sb-champion-crown { color: #0b1220; }
+.sb-champion-title { font-size: 2.5rem; font-weight: 800; color: #0b1220; text-align: center; letter-spacing: 0.04em; margin: 0; }
+.sb-champion-subtitle { font-size: 3rem; font-weight: 900; text-align: center; background: linear-gradient(90deg,#7f1d1d,#0b1220,#7f1d1d); -webkit-background-clip: text; background-clip: text; color: transparent; margin: 0; }
+.sb-champion-icons { display: flex; gap: 1rem; margin-top: 0.5rem; }
+.sb-champion-icon { color: #0b1220; }
+.sb-animate-bounce { animation: sb-bounce 1.2s infinite; }
+.sb-animate-pulse { animation: sb-pulse 1.5s infinite; }
+@keyframes sb-bounce { 0%,100%{ transform: translateY(0);}50%{ transform: translateY(-8px);} }
+@keyframes sb-pulse { 0%{ opacity:1 }50%{ opacity:0.6 }100%{ opacity:1 } }
+.sb-champion-desc { color: #0b1220; text-align: center; max-width: 36rem; margin-top: 0.5rem; }
+
+.sb-champion-badge-container { position: fixed; top: 2rem; right: 2rem; z-index: 40; }
+.sb-champion-badge { background: linear-gradient(135deg,#fef3c7,#f59e0b); padding: 0.5rem; border-radius: 9999px; border: 2px solid rgba(252,211,77,0.6); box-shadow: 0 10px 20px rgba(0,0,0,0.25); }
+.sb-champion-badge-icon { color: #0b1220; }
+
+/* Reduce oversized glows that can create a 'searchlight' effect.
+   Constrain sizes, lower blur/opacity, and ensure they never capture pointer events. */
+.scambert-glow,
+.boss-pulse,
+.sb-champion-glow,
+.sb-icon-glow,
+.sb-champion-glow {
+  pointer-events: none;
+  opacity: 0.45;
+  filter: blur(1.25rem) !important;
+  /* if using inset:0 originally, make the glow a centered circle so it can't extend to full viewport */
+  inset: auto !important;
+  width: min(34rem, 60vmin) !important;
+  height: min(34rem, 60vmin) !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  border-radius: 50% !important;
+}
+
+/* Ensure champion container clips excessive visual overflow */
+.sb-champion-container {
+  overflow: visible; /* allow glow to show but keep size controlled on the glow element above */
+}
+
+/* Targeted fix for large 'searchlight' glows observed in the wild.
+   These classes were reported by the debug script: `scambert-glow`,
+   `sb-icon-glow-blue`, and a few related glow/pulse classes. Reduce
+   blur, bound their size, lower opacity, prevent pointer interception,
+   and keep them behind interactive UI. */
+.scambert-glow,
+.sb-icon-glow,
+.sb-icon-glow-blue,
+.sb-icon-glow-amber,
+.sb-icon-glow-yellow,
+.boss-pulse,
+.sb-champion-glow {
+  pointer-events: none !important;
+  opacity: 0.35 !important;
+  filter: blur(6px) !important;
+  width: min(18rem, 36vmin) !important;
+  height: min(18rem, 36vmin) !important;
+  inset: auto !important; /* undo any inset:0 that expands to viewport */
+  left: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  right: auto !important;
+  transform: none !important;
+  border-radius: 50% !important;
+  position: absolute !important;
+  z-index: 30 !important; /* behind active modal/backdrop (10050+) */
+  background-clip: padding-box !important;
+}
+
+
+
+/* Boss click text */
+.sb-boss-click-text { color: #fecaca; font-size: 0.75rem; font-weight: 700; }
+
+/* Tooltip used for achievements */
+.sb-tooltip {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  margin-top: 0.5rem;
+  white-space: nowrap;
+  background: linear-gradient(90deg,#062017,#064e3b);
+  border: 1px solid rgba(16,185,129,0.15);
+  border-radius: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 10;
+}
+.sb-tooltip-icon { color: #68d391; }
+.sb-tooltip-text { color: #bbf7d0; font-size: 0.75rem; }
+
+/* Small info cards */
+.sb-stats-card, .sb-learn-card {
+  background: rgba(15,23,36,0.5);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(148,63,63,0.06);
+}
+.sb-card-title { color: #fbbf24; margin-bottom: 0.5rem; font-weight: 700; }
+.sb-card-text { color: #cbd5e1; margin-bottom: 0.25rem; }
+.sb-card-urgent { color: #f87171; }
+
+
+
+
+
 .sb-learning-container {
   display: flex;
   flex-direction: column;
@@ -298,6 +901,22 @@
   font-size: 1rem;
 }
 
+.sb-learning-subheader {
+  color: #fcd34d;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.sb-link-inline {
+  color: #60a5fa;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.sb-link-inline:hover { color: #93c5fd; }
+
+.sb-inline-block { position: relative; display: inline-block; }
+
 .sb-learning-description {
   font-size: 0.875rem;
   line-height: 1.625;
@@ -311,6 +930,70 @@
 
 .sb-learning-clickable:hover {
   color: #93c5fd;
+}
+
+/* Statistics card */
+.sb-stats-card {
+  background: rgba(15, 23, 36, 0.3);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(120, 53, 15, 0.18);
+  color: #e6eef8;
+}
+
+.sb-stats-header {
+  color: #fb923c;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+/* Try button */
+.sb-try-button {
+  display: block;
+  width: 100%;
+  background: linear-gradient(90deg, #f97316, #ea580c);
+  color: #ffffff;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  transition: filter 150ms ease, transform 150ms ease;
+}
+.sb-try-button:hover {
+  filter: brightness(0.95);
+  transform: translateY(-1px);
+}
+
+/* Learn More card */
+.sb-learn-card {
+  background: linear-gradient(180deg, rgba(2,6,23,0.45), rgba(3,7,18,0.25));
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(59, 130, 246, 0.08);
+}
+
+.sb-learn-header {
+  color: #93c5fd;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.sb-learn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #60a5fa;
+  text-decoration: underline;
+}
+
+.sb-learn-link:hover {
+  color: #93c5fd;
+}
+
+.sb-learn-icon {
+  width: 0.75rem;
+  height: 0.75rem;
 }
 
 .sb-achievement-inline {
@@ -590,6 +1273,8 @@
   margin-top: 0.5rem;
 }
 
+.sb-mt-2 { margin-top: 0.5rem; }
+
 .sb-progress-stat {
   background-color: rgba(15, 23, 42, 0.5);
   border-radius: 0.375rem;
@@ -640,6 +1325,76 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+/* Extra utilities and components used by Chatbot.tsx */
+.sb-learn-button {
+  width: 100%;
+  background: linear-gradient(to right, #f59e0b, #d97706);
+  color: white;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sb-quick-replies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  margin-left: 3.5rem;
+  margin-right: 0.5rem;
+}
+
+.sb-quick-reply {
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border: 1px solid rgba(0,0,0,0.08);
+  font-size: 0.875rem;
+}
+
+.sb-quick-reply-primary {
+  background: linear-gradient(to right, #ea580c, #c2410c);
+  color: white;
+}
+
+.sb-quick-reply-secondary {
+  background: rgba(2,6,23,0.3);
+  color: #bfdbfe;
+}
+
+.sb-followup-container { margin-top: 0.75rem; margin-left: 3.5rem; }
+
+.sb-link-button {
+  background: linear-gradient(to right, #dc2626, #b91c1c);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+}
+
+/* Simple icon size helpers used in many places */
+.h-7 { height: 1.75rem; }
+.w-7 { width: 1.75rem; }
+.h-6 { height: 1.5rem; }
+.w-6 { width: 1.5rem; }
+.h-5 { height: 1.25rem; }
+.w-5 { width: 1.25rem; }
+.h-4 { height: 1rem; }
+.w-4 { width: 1rem; }
+.h-8 { height: 2rem; }
+.w-8 { width: 2rem; }
+.h-20 { height: 5rem; }
+.w-20 { width: 5rem; }
+
 
 .sb-progress-champion {
   margin-top: 0.75rem;
@@ -832,6 +1587,110 @@
 .sb-input-wrapper {
   display: flex;
   gap: 0.5rem;
+}
+
+/* Utility helpers */
+.sb-full { width: 100%; }
+.sb-icon-left { margin-right: 0.5rem; display: inline-flex; align-items: center; }
+
+/* Gradient text helpers */
+.sb-gradient-mega, .sb-gradient-champion {
+  background: linear-gradient(90deg,#f59e0b,#fb7185,#a78bfa);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
+.sb-gradient-champion { background: linear-gradient(90deg,#f59e0b,#f59e0b); font-weight: 800; }
+
+/* Retry / CTA variants */
+.sb-retry-button { width: 100%; }
+
+/* Actions column used for grouped CTAs in learning flow */
+.sb-actions-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 28rem;
+}
+
+.sb-secondary-button {
+  border: 1px solid rgba(59,130,246,0.18);
+  background: rgba(30,58,138,0.08);
+  color: #bfdbfe;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  transition: background 150ms ease, transform 120ms ease;
+  text-align: center;
+}
+.sb-secondary-button:hover { background: rgba(59,130,246,0.12); transform: translateY(-1px); }
+
+.sb-final-boss-btn {
+  width: 100%;
+  background: linear-gradient(90deg,#dc2626,#b91c1c,#991b1b);
+  border: 2px solid rgba(220,38,38,0.6);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.125rem;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  box-shadow: 0 25px 50px rgba(139, 0, 0, 0.35);
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  animation: sb-pulse 2s infinite;
+}
+
+.sb-icon-right { margin-left: 0.5rem; display: inline-flex; align-items: center; }
+
+/* Achievement lines */
+.sb-achievement-line {
+  margin-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+.sb-achievement-icon { display: inline-flex; color: inherit; }
+.sb-achievement-blue { color: #60a5fa; }
+.sb-achievement-purple { color: #c084fc; }
+.sb-achievement-pink { color: #fb7185; }
+.sb-achievement-yellow { color: #fbbf24; }
+.sb-achievement-red { color: #fb7185; }
+.sb-achievement-cyan { color: #06b6d4; }
+.sb-achievement-amber { color: #f59e0b; }
+.sb-achievement-green { color: #34d399; }
+.sb-achievement-mega { color: #fbbf24; font-weight: 800; }
+.sb-achievement-champion { color: #f59e0b; font-weight: 900; }
+
+/* Message layout helpers */
+.sb-space-y-4 { display: block; }
+.sb-message-row { display: flex; gap: 0.75rem; align-items: flex-start; }
+.sb-row-reverse { flex-direction: row-reverse; }
+.sb-avatar-col { flex-shrink: 0; }
+.sb-timestamp { display: block; margin-top: 0.25rem; opacity: 0.6; font-size: 0.75rem; }
+
+
+/* Champion card (replaces large Tailwind utility blob) */
+.sb-champion-card {
+  position: relative;
+  background: linear-gradient(135deg,#fef3c7,#f59e0b);
+  padding: 2rem;
+  border-radius: 1rem;
+  border: 4px solid #fde68a;
+  box-shadow: 0 30px 60px rgba(2,6,23,0.6);
+}
+.sb-champion-glow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,#fcd34d,#f97316,#fcd34d);
+  filter: blur(3rem);
+  opacity: 0.6;
+  z-index: 0;
 }
 
 .sb-input {
@@ -1339,6 +2198,70 @@
   pointer-events: none;
 }
 
+/* Additional semantic helpers added during conversion */
+.sb-inline-link {
+  color: #60a5fa;
+  text-decoration: underline;
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.sb-inline-link:hover { color: #93c5fd; }
+.sb-inline-link-icon { display: inline-flex; align-items: center; }
+
+.sb-header-icon { display: inline-flex; color: inherit; }
+.sb-flex-shrink-0 { flex-shrink: 0; }
+.sb-list-item { display: flex; align-items: flex-start; gap: 0.5rem; }
+.sb-send-icon { display: inline-flex; align-items: center; }
+
+/* Headings and text */
+.sb-heading { color: #f8fafc; font-size: 1.25rem; font-weight: 700; }
+.sb-amber-heading { color: #fcd34d; font-weight: 700; }
+.sb-success-heading { color: #34d399; font-weight: 700; }
+.sb-error-heading { color: #fb7185; font-weight: 700; }
+.sb-muted { color: #94a3b8; font-size: 0.875rem; }
+.sb-max-w-md { max-width: 28rem; }
+.sb-text-center { text-align: center; }
+
+/* Flex & spacing helpers */
+.sb-items-end { align-items: flex-end; }
+.sb-justify-center { justify-content: center; }
+.sb-space-y-6 { display: block; margin-top: 1.5rem; }
+.sb-space-y-2 { display: block; margin-top: 0.5rem; }
+.sb-full-height { height: 100%; }
+.sb-mb-4 { margin-bottom: 1rem; }
+.sb-mb-6 { margin-bottom: 1.5rem; }
+
+/* Small muted list and bullets */
+.sb-small { font-size: 0.875rem; }
+.sb-muted-list { color: #94a3b8; }
+.sb-bullet { display: inline-block; margin-right: 0.5rem; vertical-align: middle; }
+.sb-bullet-blue { color: #60a5fa; margin-top: 0.125rem; }
+.sb-bullet-orange { color: #fb923c; margin-top: 0.125rem; }
+.sb-bullet-yellow { color: #fbbf24; margin-top: 0.125rem; }
+.sb-bullet-red { color: #fb7185; margin-top: 0.125rem; }
+
+/* Welcome heading */
+.sb-welcome-heading { color: #60a5fa; font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
+
+/* Negative offset and outcome wrapper */
+.sb-neg-ml-16 { margin-left: -4rem; }
+.sb-outcome-wrap { margin-top: 0.75rem; margin-left: 3.5rem; }
+.sb-mb-3 { margin-bottom: 0.75rem; }
+
+/* Champion glow replacement for utility gradient + blur */
+.sb-champion-glow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #f59e0b, #f97316, #f59e0b);
+  filter: blur(3rem);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+
+
+
 /* Responsive styles */
 @media (max-width: 640px) {
   .sb-dialog-container {
@@ -1349,6 +2272,208 @@
     max-width: 95vw;
   }
 }
+
+/* Final override: nudge and shrink the header icon glow so it aligns with Figma reference
+   - smaller size, slightly offset left/up from the icon center, reduced blur and opacity
+   - use !important to override broader utility rules above */
+.sb-header .sb-icon-glow-amber,
+.sb-header .sb-icon-glow-blue,
+.sb-header .sb-icon-glow-yellow {
+  width: 6rem !important;
+  height: 6rem !important;
+  filter: blur(12px) !important;
+  opacity: 0.55 !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-60%, -40%) !important; /* nudge left and up */
+  pointer-events: none !important;
+  z-index: 20 !important; /* ensure header glow remains behind header content but above page */
+}
+
+/* Interaction & stacking fixes: ensure floating icons remain clickable
+   and modal/dialog content accepts pointer events. Backdrops keep
+   their ability to capture clicks but children (modal content) are
+   explicitly allowed to receive pointer events and sit above icons. */
+.scambert-float,
+.sb-floating-icon,
+.sb-boss-icon-container {
+  z-index: 40; /* keep floating icons below modal/backdrop stack (modal/backdrop use ~50-100) */
+}
+
+.chat-backdrop,
+.sb-modal-backdrop,
+.sb-boss-backdrop,
+.sb-dialog-backdrop,
+.sb-dialog-backdrop {
+  z-index: 10050; /* modal/backdrop stack */
+  /* backdrops capture clicks (used to close modals) */
+  pointer-events: auto;
+}
+
+.sb-dialog-container,
+.sb-modal-content,
+.sb-boss-root,
+.sb-champion-root {
+  position: relative;
+  z-index: 10060; /* ensure interactive content is above the backdrop */
+  pointer-events: auto; /* explicitly allow events on modal content */
+}
+
+/* Keep purely decorative particle/glow elements from intercepting events */
+.sb-boss-particle,
+.sb-icon-glow,
+.sb-champion-glow {
+  pointer-events: none;
+}
+
+
+/* Follow-up / outcome button wrappers */
+.sb-followup-wrap {
+  margin-top: 0.75rem;
+  margin-left: 3.5rem;
+}
+.sb-followup-button {
+  background: linear-gradient(90deg, #dc2626, #b91c1c);
+  color: #fff;
+  border: 1px solid rgba(239,68,68,0.12);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.12s ease;
+}
+.sb-followup-icon { width: 1rem; height: 1rem; }
+
+.sb-outcome-wrap { margin-top: 0.75rem; margin-left: 3.5rem; }
+
+/* Welcome modal small utilities */
+.sb-welcome-body { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; }
+
+/* Inline link used in messages */
+.sb-link {
+  text-decoration: underline;
+  color: #60a5fa;
+  transition: color 0.15s ease;
+}
+.sb-link:hover { color: #fb923c; }
+
+/* Achievements panel (converted from Tailwind utilities) */
+.sb-achievements-panel {
+  width: 100%;
+  max-width: 28rem;
+  background: linear-gradient(135deg, rgba(161,98,7,0.08), rgba(120,53,15,0.06));
+  border: 1px solid rgba(194,65,12,0.06);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin: 0.5rem 0;
+}
+
+.sb-achievements-title {
+  color: #f59e0b;
+  text-align: center;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 700;
+}
+
+.sb-achievements-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.sb-achievement {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.375rem;
+  padding: 0.4rem 0.75rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.02);
+  color: #e6eef8;
+  font-size: 0.875rem;
+}
+
+.sb-icon {
+  display: inline-flex;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.sb-icon--blue { color: #60a5fa; }
+.sb-icon--purple { color: #c084fc; }
+.sb-icon--pink { color: #f472b6; }
+.sb-icon--yellow { color: #facc15; }
+.sb-icon--red { color: #f87171; }
+.sb-icon--cyan { color: #06b6d4; }
+.sb-icon--amber { color: #f59e0b; }
+.sb-icon--green { color: #34d399; }
+
+.sb-achievement-label { color: inherit; font-size: 0.875rem; }
+
+.sb-achievement--first { background: rgba(30,58,138,0.08); border-color: rgba(59,130,246,0.08); }
+.sb-achievement--third { background: rgba(124,58,237,0.06); border-color: rgba(139,92,246,0.08); }
+.sb-achievement--rickroll { background: rgba(236,72,153,0.06); border-color: rgba(236,72,153,0.08); }
+.sb-achievement--master { background: linear-gradient(90deg, rgba(250,204,21,0.04), rgba(245,158,11,0.04)); border-color: rgba(250,204,21,0.08); }
+.sb-achievement--gullible { background: linear-gradient(90deg, rgba(239,68,68,0.04), rgba(249,115,22,0.04)); border-color: rgba(239,68,68,0.08); }
+.sb-achievement--hypergamer { background: linear-gradient(90deg, rgba(34,211,238,0.04), rgba(59,130,246,0.04)); border-color: rgba(34,211,238,0.08); }
+.sb-achievement--wiseone { background: linear-gradient(90deg, rgba(245,158,11,0.04), rgba(234,179,8,0.04)); border-color: rgba(245,158,11,0.08); }
+.sb-achievement--readrickroll { background: linear-gradient(90deg, rgba(16,185,129,0.04), rgba(16,185,129,0.04)); border-color: rgba(16,185,129,0.08); }
+.sb-achievement--mega { background: linear-gradient(90deg, rgba(250,204,21,0.06), rgba(236,72,153,0.06), rgba(139,92,246,0.06)); border: 2px solid rgba(250,204,21,0.12); }
+
+@keyframes sb-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+.sb-achievement--pulse { animation: sb-pulse 1.6s ease-in-out infinite; }
+
+
+/* Progress panel converted classes */
+.sb-progress-panel {
+  width: 100%;
+  max-width: 28rem;
+  background: rgba(15,23,36,0.5);
+  border: 1px solid rgba(100,116,139,0.12);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin: 0.5rem 0;
+}
+
+.sb-progress-title {
+  color: #cbd5e1;
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.sb-progress-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.sb-progress-card {
+  background: rgba(15,23,42,0.4);
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+}
+
+.sb-progress-number {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.sb-progress-number--blue { color: #60a5fa; }
+.sb-progress-number--green { color: #34d399; }
+.sb-progress-number--red { color: #f87171; }
+.sb-progress-number--purple { color: #c084fc; }
+.sb-progress-label { color: #94a3b8; font-size: 0.75rem; }
+
 /* Scammerblob Chatbot Styles */
 
 /* Base styles */

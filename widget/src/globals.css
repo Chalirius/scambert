@@ -1,0 +1,78 @@
+/* Simplified globals converted from the Figma snippet
+   - Translated theme variables into :root CSS variables
+   - Applied minimal base/reset styles
+   - Kept names close to provided spec so we can use them in component CSS
+*/
+:root {
+  --color-background: #ffffff;
+  --color-foreground: #1c1b1b; /* fallback for oklch value */
+  --color-card: #ffffff;
+  --color-card-foreground: #1c1b1b;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #1c1b1b;
+  --color-primary: #111827; /* fallback */
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #f6f5f6;
+  --color-secondary-foreground: #111827;
+  --color-muted: #ececf0;
+  --color-muted-foreground: #717182;
+  --color-accent: #e9ebef;
+  --color-accent-foreground: #111827;
+  --color-destructive: #d4183d;
+  --color-destructive-foreground: #ffffff;
+  --color-border: rgba(0,0,0,0.1);
+  --color-input: transparent;
+  --color-ring: rgba(0,0,0,0.2);
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.875rem;
+}
+
+/* Base reset and small utilities used by the widget */
+* { box-sizing: border-box; }
+html, body, #root, #sc-widget { height: 100%; }
+body {
+  margin: 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Accessible focus ring fallback used by components */
+:focus { outline: 2px solid var(--color-ring); outline-offset: 2px; }
+
+/* Helpful utility classes that mimic a handful of layout helpers used in the Figma codebase
+   (We intentionally keep this small and scoped; not reintroducing Tailwind.)
+*/
+.center-flex { display:flex; align-items:center; justify-content:center; }
+.inline-block { display:inline-block; }
+.hidden { display:none !important; }
+
+/* Ensure modals/backdrops allow interactions inside modal but capture clicks on backdrop */
+.modal-backdrop { position: fixed; inset: 0; display:flex; align-items:center; justify-content:center; }
+
+/* Small typographic helpers */
+.text-sm { font-size: 0.875rem; }
+.text-xs { font-size: 0.75rem; }
+
+/* Provide a CSS hook for components to use the theme colors */
+.theme-bg { background: var(--color-background); }
+.theme-foreground { color: var(--color-foreground); }
+
+/* End of globals.css */
+
+
+.sb-amber-glow-wrap {
+  display: inline-block; /* keep sizing/layout unchanged */
+  border-radius: 9999px; /* ensure glow is rounded for circular icons */
+  /* soft amber drop shadow */
+  filter: drop-shadow(0 0 20px rgba(255, 191, 64, 0.85));
+}
+
+/* Optionally nudge a tiny warm outline on high-DPI to deepen glow without affecting SVG internals */
+.sb-amber-glow-wrap > * {
+  will-change: filter;
+}

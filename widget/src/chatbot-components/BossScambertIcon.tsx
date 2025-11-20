@@ -18,11 +18,12 @@ export function BossScambertIcon({
     visible: {
       scale: 1,
       opacity: 1,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    },
+            transition: {
+            duration: 2.5,
+            repeat: Infinity,
+            ease: [0.42, 0, 0.58, 1] as any,
+          }
+  }
   }
 
   const float = animate
@@ -31,7 +32,7 @@ export function BossScambertIcon({
         transition: {
           duration: 2.5,
           repeat: Infinity,
-          ease: "easeInOut",
+          ease: [0.42, 0, 0.58, 1] as any,
         },
       }
     : {}
@@ -104,11 +105,11 @@ export function BossScambertIcon({
                 }
               : {}
           }
-          transition={{
-            duration: 2.5,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
+            transition={{
+              duration: 2.5,
+              repeat: Infinity,
+              ease: [0.42, 0, 0.58, 1] as any,
+            }}
         />
 
         {/* Main body - dark blob base */}
@@ -160,7 +161,7 @@ export function BossScambertIcon({
             transition={{
               duration: 2,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: [0.42, 0, 0.58, 1] as any,
             }}
           />
           <circle cx="50" cy="32" r="5" fill="url(#redEyeGlow)" opacity="0.5" />
@@ -190,7 +191,7 @@ export function BossScambertIcon({
             transition={{
               duration: 1.5,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: [0.42, 0, 0.58, 1] as any,
             }}
           />
           <motion.circle
@@ -209,7 +210,7 @@ export function BossScambertIcon({
             transition={{
               duration: 1.5,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: [0.42, 0, 0.58, 1] as any,
             }}
           />
 
@@ -262,7 +263,7 @@ export function BossScambertIcon({
             transition={{
               duration: 3,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: [0.42, 0, 0.58, 1] as any,
             }}
           />
 
@@ -351,7 +352,7 @@ export function BossScambertIcon({
             transition={{
               duration: 2,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: [0.42, 0, 0.58, 1] as any,
             }}
           />
           <motion.circle
@@ -370,7 +371,7 @@ export function BossScambertIcon({
             transition={{
               duration: 2.5,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: [0.42, 0, 0.58, 1] as any,
               delay: 0.5,
             }}
           />
@@ -390,7 +391,7 @@ export function BossScambertIcon({
             transition={{
               duration: 2.2,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: [0.42, 0, 0.58, 1] as any,
               delay: 1,
             }}
           />
@@ -425,7 +426,7 @@ export function BossScambertIcon({
             transition={{
               duration: 1.8,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: [0.42, 0, 0.58, 1] as any,
             }}
           />
         </motion.g>
@@ -529,7 +530,7 @@ export function BossScambertIcon({
         transition={{
           duration: 3,
           repeat: Infinity,
-          ease: "easeInOut",
+          ease: [0.42, 0, 0.58, 1] as any,
         }}
       >
         {[...Array(6)].map((_, i) => (
@@ -553,7 +554,7 @@ export function BossScambertIcon({
               duration: 3 + Math.random() * 2,
               repeat: Infinity,
               delay: i * 0.5,
-              ease: "easeInOut",
+              ease: [0.42, 0, 0.58, 1] as any,
             }}
           />
         ))}

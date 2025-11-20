@@ -2,6 +2,7 @@ import typescript from '@rollup/plugin-typescript';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import replace from '@rollup/plugin-replace';
+import postcss from 'rollup-plugin-postcss';
 
 export default {
   input: 'src/index.tsx', // Entry point of your widget (TypeScript file)
@@ -13,7 +14,16 @@ export default {
     name: 'ScamducationWidget', // Global variable name
     sourcemap: true,        // Generate source maps for easier debugging
   },
+  // Silence noisy rollup warnings coming from framer-motion's ESM files
+  onwarn(warning, warn) {
+    // Ignore module-level directive warnings from framer-motion ("use client")
+    if (warning.code === 'MODULE_LEVEL_DIRECTIVE' && /framer-motion/.test(String(warning.loc?.file))) {
+      return
+    }
+    warn(warning)
+  },
   plugins: [
+    postcss({ inject: true, minimize: true }),
     resolve({ browser: true }),
     commonjs(),
     replace({

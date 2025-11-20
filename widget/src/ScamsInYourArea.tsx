@@ -69,7 +69,9 @@ export function ScamsInYourArea() {
               delay: 0.3,
             }}
           >
+          <div className="sb-amber-glow-wrap">
             <ScambertIcon size={56} />
+          </div>
           </motion.div>
           <h2
             style={{
